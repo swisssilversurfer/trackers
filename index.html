@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Motorrad Offroad-Strecken – Frankreich</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+
+    .toggle-buttons {
+      display: flex;
+      justify-content: center;
+      margin: 10px 0;
+    }
+
+    .toggle-buttons button {
+      margin: 0 5px;
+      padding: 10px 20px;
+      cursor: pointer;
+    }
+
+    .filters {
+      text-align: center;
+      margin: 10px 0;
+    }
+
+    .filters select {
+      margin: 0 5px;
+      padding: 5px;
+    }
+
+    #map, #list {
+      display: none;
+      padding: 10px;
+    }
+
+    #map {
+      height: 600px;
+    }
+
+    .track-item {
+      border-bottom: 1px solid #ddd;
+      padding: 10px 0;
+    }
+
+    .track-item h3 {
+      margin: 0 0 5px;
+    }
+
+    .active-view {
+      display: block;
+    }
+
+    @media (max-width: 768px) {
+      #map {
+        height: 400px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <h1 style="text-align: center;">Motorrad Offroad-Strecken – Frankreich</h1>
+
+  <!-- Umschalter -->
+  <div class="toggle-buttons">
+    <button onclick="showView('list')">Listenansicht</button>
+    <button onclick="showView('map')">Kartenansicht</button>
+  </div>
+
+  <!-- Filter -->
+  <div class="filters">
+    <label>Region:
+      <select id="regionFilter">
+        <option value="">Alle</option>
+        <option value="Piemont">Piemont</option>
+        <option value="Provence">Provence</option>
+      </select>
+    </label>
+
+    <label>Schwierigkeit:
+      <select id="difficultyFilter">
+        <option value="">Alle</option>
+        <option value="Einfach">Einfach</option>
+        <option value="Mittel">Mittel</option>
+        <option value="Schwer">Schwer</option>
+      </select>
+    </label>
+
+    <label>Untergrund:
+      <select id="surfaceFilter">
+        <option value="">Alle</option>
+        <option value="Asphalt">Asphalt</option>
+        <option value="Off-road">Off-road</option>
+        <option value="Gemischt">Gemischt</option>
+      </select>
+    </label>
+  </div>
+
+  <!-- Listenansicht -->
+  <div id="list" class="active-view"></div>
+
+  <!-- Kartenansicht -->
+  <div id="map"></div>
+
+  <!-- Leaflet & GPX -->
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet-gpx/1.7.0/gpx.min.js"></script>
+
+  <script>
+    let allTracks = [];
+
+    function showView(view) {
+      document.getElementById("list").classList.remove("active-view");
+      document.getElementById("map").classList.remove("active-view");
+      document.getElementById(view).classList.add("active-view");
+
+      if (view === "map") {
+        renderMap();
+      }
+    }
+
+    function loadTracks() {
+      fetch('getTracks.php')
+        .then(res => res.json())
+        .then(data => {
+          allTracks = data;
+          renderTracks();
+          renderMap();
+        });
+    }
+
+    function getFilteredTracks() {
+      const region = document.getElementById('regionFilter').value;
+      const diff = document.getElementById('difficultyFilter').value;
+      const surface = document.getElementById('surfaceFilter').value;
+
+      return allTracks.filter(track =>
+        (!region || track.region === region) &&
+        (!diff || track.schwierigkeit === diff) &&
+        (!surface || track.untergrund === surface)
+      );
+    }
+
+    function renderTracks() {
+      const listDiv = document.getElementById('list');
+      const filtered = getFilteredTracks();
+      listDiv.innerHTML = '';
+
+      if (filtered.length === 0) {
+        listDiv.innerHTML = '<p>Keine Strecken gefunden.</p>';
+        return;
+      }
+
+      filtered.forEach(track => {
+        listDiv.innerHTML += `
+          <div class="track-item">
+            <h3>${track.name}</h3>
+            <p><strong>Region:</strong> ${track.region}</p>
+            <p><strong>Länge:</strong> ${track.laenge}</p>
+            <p><strong>Schwierigkeit:</strong> ${track.schwierigkeit}</p>
+            <p><strong>Untergrund:</strong> ${track.untergrund}</p>
+            <a href="${track.file}" download>GPX herunterladen</a>
+          </div>
+        `;
+      });
+    }
+
+    function renderMap() {
+      const container = document.getElementById("map");
+      container.innerHTML = ""; // Reset map container
+
+      const map = L.map('map').setView([44.5, 2.5], 6);
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; OpenStreetMap'
+      }).addTo(map);
+
+      const filtered = getFilteredTracks();
+
+      if (filtered.length === 0) return;
+
+      let bounds = [];
+
+      filtered.forEach(track => {
+        const gpx = new L.GPX(track.file, {
+          async: true,
+          polyline_options: {
+            color: 'blue',
+            weight: 3
+          },
+          marker_options: {
+            startIconUrl: null,
+            endIconUrl: null,
+            shadowUrl: null
+          }
+        }).on('loaded', function(e) {
+          bounds.push(e.target.getBounds());
+          if (bounds.length === filtered.length) {
+            const all = bounds.reduce((acc, b) => acc.extend(b), bounds[0]);
+            map.fitBounds(all);
+          }
+        }).on('mouseover', function(e) {
+          e.target.bindPopup(`
+            <strong>${track.name}</strong><br/>
+            Region: ${track.region}<br/>
+            ${track.laenge}<br/>
+            Schwierigkeit: ${track.schwierigkeit}<br/>
+            Untergrund: ${track.untergrund}
+          `).openPopup();
+        }).addTo(map);
+      });
+    }
+
+    // Filter neu anwenden
+    ['regionFilter', 'difficultyFilter', 'surfaceFilter'].forEach(id => {
+      document.getElementById(id).addEventListener('change', () => {
+        renderTracks();
+        if (document.getElementById('map').classList.contains('active-view')) {
+          renderMap();
+        }
+      });
+    });
+
+    // Start
+    loadTracks();
+  </script>
+</body>
+</html>
