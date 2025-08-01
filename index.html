@@ -1,233 +1,325 @@
 <!DOCTYPE html>
-<html lang="de">
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Motorrad Touren</title>
+  <title>Motorbike Tours</title>
   <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
   <style>
+    main {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 0 1rem;
+    }
+
     body {
       font-family: Arial, sans-serif;
       margin: 0;
       padding: 0;
     }
 
-    .toggle-buttons {
+    header {
       display: flex;
-      justify-content: center;
-      margin: 10px 0;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.5rem 1rem;
+      background: #f8f8f8;
+      border-bottom: 1px solid #ccc;
+    }
+
+    .logo-title {
+      display: flex;
+      align-items: center;
+    }
+
+    .logo-title h1 {
+      margin: 0 0 0 0.5rem;
+      font-size: 1.5rem;
+    }
+
+    .logo-img {
+      height: 40px; /* Resize as needed */
+      width: auto;
+      border-radius: 4px; /* Optional: rounded corners */
     }
 
     .toggle-buttons button {
-      margin: 0 5px;
-      padding: 10px 20px;
+      margin-left: 0.5rem;
+      padding: 0.5rem 1rem;
+      border: 1px solid #888;
+      background: #eee;
       cursor: pointer;
     }
 
-    .filters {
-      text-align: center;
-      margin: 10px 0;
+    .country-header {
+      display: flex;
+      align-items: center;
+      font-size: 1.3rem;
+      background-color: #f0f0f0;
+      padding: 1rem;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      margin: 1rem 0 0.5rem;
     }
 
-    .filters select {
-      margin: 0 5px;
-      padding: 5px;
+    .country-header img {
+      width: 24px;
+      height: 16px;
+      margin-right: 0.5rem;
     }
 
-    #map, #list {
-      display: none;
-      padding: 10px;
+    .tour-list {
+      padding: 1rem;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .tour-item {
+      display: flex;
+      align-items: center;
+      border: 1px solid #ccc;
+      padding: 1rem;
+      margin-bottom: 1rem;
+      background: #fff;
+    }
+
+    .tour-thumb {
+      width: 80px;
+      height: 60px;
+      object-fit: cover;
+      margin-right: 1rem;
+      border-radius: 4px;
+      border: 1px solid #ddd;
+    }
+
+    .tour-info {
+      display: flex;
+      flex-direction: column;
     }
 
     #map {
-      height: 600px;
+      height: 0;
+      visibility: hidden;
+      border: 1px solid #aaa;
+      border-radius: 4px;
+      margin-top: 1rem;
+      transition: height 0.3s ease;
     }
 
-    .track-item {
-      border-bottom: 1px solid #ddd;
-      padding: 10px 0;
-    }
-
-    .track-item h3 {
-      margin: 0 0 5px;
-    }
-
-    .active-view {
-      display: block;
-    }
-
-    @media (max-width: 768px) {
-      #map {
-        height: 400px;
-      }
-    }
   </style>
 </head>
 <body>
-
-  <h1 style="text-align: center;">Motorrad Touren</h1>
-
-  <!-- Umschalter -->
+  <header>
+  <div class="logo-title">
+    <img src="images/Trackers.jpg" alt="The Tracker's Logo" class="logo-img" />
+    <h1>Motorbike Tours</h1>
+  </div>
   <div class="toggle-buttons">
-    <button onclick="showView('list')">Listenansicht</button>
-    <button onclick="showView('map')">Kartenansicht</button>
+    <button onclick="showList()">List View</button>
+    <button onclick="showMap()">Map View</button>
   </div>
+</header>
 
-  <!-- Filter -->
-  <div class="filters">
-    <label>Region:
-      <select id="regionFilter">
-        <option value="">Alle</option>
-        <option value="Piemont">Piemont</option>
-        <option value="Provence">Provence</option>
-      </select>
-    </label>
+  <main>
 
-    <label>Schwierigkeit:
-      <select id="difficultyFilter">
-        <option value="">Alle</option>
-        <option value="Einfach">Einfach</option>
-        <option value="Mittel">Mittel</option>
-        <option value="Schwer">Schwer</option>
-      </select>
-    </label>
+    <div id="map"></div>
+    
+    <!-- TOUR INFORMATION -->
+    
+    <!-- Italy -->
+    <div class="tour-list">
+    
+      <div class="country-header">
+        <img src="https://flagcdn.com/w40/it.png" alt="Italy flag">
+        <span>Italy</span>
+      </div>
 
-    <label>Untergrund:
-      <select id="surfaceFilter">
-        <option value="">Alle</option>
-        <option value="Asphalt">Asphalt</option>
-        <option value="Off-road">Off-road</option>
-        <option value="Gemischt">Gemischt</option>
-      </select>
-    </label>
-  </div>
-
-  <!-- Listenansicht -->
-  <div id="list" class="active-view"></div>
-
-  <!-- Kartenansicht -->
-  <div id="map"></div>
-
-  <!-- Leaflet & GPX -->
-  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet-gpx/1.7.0/gpx.min.js"></script>
-
-  <script>
-    let allTracks = [];
-
-    function showView(view) {
-      document.getElementById("list").classList.remove("active-view");
-      document.getElementById("map").classList.remove("active-view");
-      document.getElementById(view).classList.add("active-view");
-
-      if (view === "map") {
-        renderMap();
-      }
-    }
-
-    function loadTracks() {
-      fetch('getTracks.php')
-        .then(res => res.json())
-        .then(data => {
-          allTracks = data;
-          renderTracks();
-          renderMap();
-        });
-    }
-
-    function getFilteredTracks() {
-      const region = document.getElementById('regionFilter').value;
-      const diff = document.getElementById('difficultyFilter').value;
-      const surface = document.getElementById('surfaceFilter').value;
-
-      return allTracks.filter(track =>
-        (!region || track.region === region) &&
-        (!diff || track.schwierigkeit === diff) &&
-        (!surface || track.untergrund === surface)
-      );
-    }
-
-    function renderTracks() {
-      const listDiv = document.getElementById('list');
-      const filtered = getFilteredTracks();
-      listDiv.innerHTML = '';
-
-      if (filtered.length === 0) {
-        listDiv.innerHTML = '<p>Keine Strecken gefunden.</p>';
-        return;
-      }
-
-      filtered.forEach(track => {
-        listDiv.innerHTML += `
-          <div class="track-item">
-            <h3>${track.name}</h3>
-            <p><strong>Region:</strong> ${track.region}</p>
-            <p><strong>Länge:</strong> ${track.laenge}</p>
-            <p><strong>Schwierigkeit:</strong> ${track.schwierigkeit}</p>
-            <p><strong>Untergrund:</strong> ${track.untergrund}</p>
-            <a href="${track.file}" download>GPX herunterladen</a>
+      <div class="tour-item">
+        <img src="images/IT Lago-Idro.jpeg" alt="Lago d'Idro" class="tour-thumb">
+          <div class="tour-info">    
+            <strong>Lago d'Idro</strong>
+            <span class="tour-details"> Length: 45 km | Difficulty: Easy | Surface: Gravel |  
+            <a href="gpx/IT Lago-Idro.gpx" download>Download GPX</a>
+            </span>
           </div>
-        `;
-      });
+      </div>
+
+      <div class="tour-item">
+        <img src="images/IT Monte-Jafferau.jpeg" alt="Monte-Jafferau" class="tour-thumb">
+          <div class="tour-info">
+            <strong>Monte Jafferau</strong>
+            <span class="tour-details">Length: 30 km | Difficulty: Medium | Surface: Gravel |  
+            <a href="gpx/IT Monte-Jafferau.gpx" download>Download GPX</a>
+            </span>
+          </div>
+      </div>
+      
+      <div class="tour-item">
+        <img src="images/IT Colle-del-Sommeiller.jpeg" alt="Colle-del-Sommeiller" class="tour-thumb">
+          <div class="tour-info">
+            <strong>Colle del Sommeiller</strong>
+            <span class="tour-details">Length: 26 km | Difficulty: Medium | Surface: Gravel |  
+            <a href="gpx/IT Colle-del-Sommeiller.gpx" download>Download GPX</a>
+            </span>
+          </div>
+      </div>
+    </div>
+
+    <!-- France -->
+    <div class="tour-list">
+    
+      <div class="country-header">
+        <img src="https://flagcdn.com/w40/fr.png" alt="France flag">
+        <span>France</span>
+      </div>
+
+      <div class="tour-item">
+        <img src="images/FR Route-des-Grandes-Alpes.jpeg" alt="Lago d'Idro" class="tour-thumb">
+          <div class="tour-info">    
+            <strong>Route des Grandes Alpes</strong>
+            <span class="tour-details"> Length: 736 km | Difficulty: Easy | Surface: Road |  
+            <a href="gpx/FR Route-des-Grandes-Alpes.gpx" download>Download GPX</a>
+            </span>
+          </div>
+      </div>
+    </div>
+
+    <!-- Switzerland -->
+    <div class="tour-list">
+
+      <div class="country-header">
+        <img src="https://flagcdn.com/w40/ch.png" alt="Switzerland flag">
+        <span>Switzerland</span>
+      </div>
+
+      <div class="tour-item">
+        <img src="images/CH Grengiols-Heiligkreuz.jpeg" alt="Lago d'Idro" class="tour-thumb">
+          <div class="tour-info">    
+            <strong>Grengiols - Heiligkreuz</strong>
+            <span class="tour-details"> Length: 38 km | Difficulty: Easy | Surface: Gravel |  
+            <a href="gpx/CH Grengiols-Heiligkreuz.gpx" download>Download GPX</a>
+            </span>
+          </div>
+      </div>
+    </div>
+  
+  </main>
+
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+  <script src="https://unpkg.com/leaflet-gpx/gpx.min.js"></script>
+  <script>
+    const map = L.map('map').setView([45.2, 7.2], 7);
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; OpenStreetMap contributors',
+      maxZoom: 18
+    }).addTo(map);
+
+    const tours = [
+      {
+        name: "Lago d'Idro",
+        gpx: "gpx/IT Lago-Idro.gpx",
+        lat: 45.8,
+        lon: 10.5,
+        length: "45 km",
+        surface: "Gravel"
+      },
+      {
+        name: "Monte Jafferau",
+        gpx: "gpx/IT Monte-Jafferau.gpx",
+        lat: 45.1,
+        lon: 6.7,
+        length: "30 km",
+        surface: "Gravel"
+      },
+      {
+        name: "Colle del Sommeiller",
+        gpx: "gpx/IT Colle-del-Sommeiller.gpx",
+        lat: 45.1,
+        lon: 6.9,
+        length: "26 km",
+        surface: "Gravel"
+      },
+      {
+        name: "Route des Grandes Alpes",
+        gpx: "gpx/FR Route-des-Grandes-Alpes.gpx",
+        lat: 44.9,
+        lon: 6.6,
+        length: "736 km",
+        surface: "Road"
+      },
+      {
+        name: "Grengiols - Heiligkreuz",
+        gpx: "gpx/CH Grengiols-Heiligkreuz.gpx",
+        lat: 46.3,
+        lon: 8.1,
+        length: "38 km",
+        surface: "Gravel"
+      }
+    ];
+
+let currentGPXLayer = null; // track the currently shown GPX layer
+
+tours.forEach(tour => {
+  const marker = L.marker([tour.lat, tour.lon]).addTo(map);
+
+  marker.bindTooltip(
+    `<div>
+      <strong>${tour.name}</strong><br>
+      <span style="font-size: 0.8em;">Length: ${tour.length}<br>Surface: ${tour.surface}</span>
+    </div>`,
+    { permanent: false, direction: "top" }
+  );
+
+  marker.on("click", () => {
+    if (currentGPXLayer) {
+      map.removeLayer(currentGPXLayer);
     }
 
-    function renderMap() {
-      const container = document.getElementById("map");
-      container.innerHTML = ""; // Reset map container
-
-      const map = L.map('map').setView([44.5, 2.5], 6);
-      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '&copy; OpenStreetMap'
-      }).addTo(map);
-
-      const filtered = getFilteredTracks();
-
-      if (filtered.length === 0) return;
-
-      let bounds = [];
-
-      filtered.forEach(track => {
-        const gpx = new L.GPX(track.file, {
-          async: true,
-          polyline_options: {
-            color: 'blue',
-            weight: 3
-          },
-          marker_options: {
-            startIconUrl: null,
-            endIconUrl: null,
-            shadowUrl: null
-          }
-        }).on('loaded', function(e) {
-          bounds.push(e.target.getBounds());
-          if (bounds.length === filtered.length) {
-            const all = bounds.reduce((acc, b) => acc.extend(b), bounds[0]);
-            map.fitBounds(all);
-          }
-        }).on('mouseover', function(e) {
-          e.target.bindPopup(`
-            <strong>${track.name}</strong><br/>
-            Region: ${track.region}<br/>
-            ${track.laenge}<br/>
-            Schwierigkeit: ${track.schwierigkeit}<br/>
-            Untergrund: ${track.untergrund}
-          `).openPopup();
-        }).addTo(map);
-      });
-    }
-
-    // Filter neu anwenden
-    ['regionFilter', 'difficultyFilter', 'surfaceFilter'].forEach(id => {
-      document.getElementById(id).addEventListener('change', () => {
-        renderTracks();
-        if (document.getElementById('map').classList.contains('active-view')) {
-          renderMap();
-        }
-      });
+    const gpxLayer = new L.GPX(tour.gpx, {
+      async: true,
+      marker_options: {
+        startIconUrl: '',
+        endIconUrl: '',
+        shadowUrl: ''
+      }
     });
 
-    // Start
-    loadTracks();
+    gpxLayer.on("loaded", () => {
+      map.fitBounds(gpxLayer.getBounds());
+    });
+
+    gpxLayer.addTo(map);
+    currentGPXLayer = gpxLayer;
+
+    marker.bindPopup(
+      `<b>${tour.name}</b><br>Length: ${tour.length}<br>Surface: ${tour.surface}`
+    ).openPopup();
+  });
+});
+
+
+function showMap() {
+  const mapEl = document.getElementById('map');
+  mapEl.style.visibility = 'visible';
+  mapEl.style.height = '80vh';
+
+  document.querySelectorAll('.tour-list').forEach(el => el.style.display = 'none');
+
+  setTimeout(() => {
+    map.invalidateSize();
+  }, 300);
+}
+
+function showList() {
+  const mapEl = document.getElementById('map');
+  mapEl.style.visibility = 'hidden';
+  mapEl.style.height = '0';
+
+  document.querySelectorAll('.tour-list').forEach(el => el.style.display = '');
+}
+
+
   </script>
 </body>
 </html>
