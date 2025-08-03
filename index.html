@@ -557,7 +557,7 @@ function closeFilterMenu() {
 }
 
 // Show/hide gallery/map views
-function showGallery(show) {
+function showGallery(show, tour = null) {
   if (show) {
     galleryView.style.display = "flex";
     container.style.display = "none";
@@ -566,6 +566,12 @@ function showGallery(show) {
     if (filterDropdown) {
       filterDropdown.style.display = window.innerWidth <= 768 ? "block" : "inline-block";
     }
+
+    // 👇 Render either all tours or the selected one
+    renderTouren(tour);
+
+    galleryView.scrollIntoView({ behavior: "smooth" }); // optional scroll to gallery
+
   } else {
     galleryView.style.display = "none";
     container.style.display = "flex";
@@ -574,6 +580,7 @@ function showGallery(show) {
     if (filterDropdown) {
       filterDropdown.style.display = "none";
     }
+
     setTimeout(() => {
       if (typeof map !== "undefined") map.invalidateSize();
     }, 300);
@@ -633,21 +640,32 @@ L.control.layers(baseLayers).addTo(map);
    RENDERING
    ======================= */
 
-function renderTouren() {
+function renderTouren(selectedTour = null) {
   galleryView.innerHTML = "";
-  const regionValue = regionFilter.value;
-  const levelValue = levelFilter.value;
-  const surfaceValue = surfaceFilter.value;
 
-  const gefiltert = touren.filter(t =>
-    (!regionValue || t.region === regionValue) &&
-    (!levelValue || t.schwierigkeit === levelValue) &&
-    (!surfaceValue || t.strassenbelag === surfaceValue)
-  );
+  const regionValue = regionFilter.value.toLowerCase();
+  const levelValue = levelFilter.value.toLowerCase();
+  const surfaceValue = surfaceFilter.value.toLowerCase();
+
+  let gefiltert;
+
+  if (selectedTour) {
+    // Only show the clicked tour
+    gefiltert = [selectedTour];
+  } else {
+    // Apply regular filters
+    gefiltert = touren.filter(t =>
+      (!regionValue || t.region.toLowerCase() === regionValue) &&
+      (!levelValue || t.schwierigkeit.toLowerCase() === levelValue) &&
+      (!surfaceValue || t.strassenbelag.toLowerCase() === surfaceValue)
+    );
+  }
 
   gefiltert.forEach(t => {
     const galleryItem = document.createElement("div");
     galleryItem.className = "gallery-item";
+    galleryItem.dataset.trackName = t.name;
+
     galleryItem.innerHTML = `
       <img src="${t.bild[0]}" alt="${t.name}">
       <div class="tour-title">
@@ -659,6 +677,7 @@ function renderTouren() {
       <div class="tour-besonderheiten">Besonderheiten: ${t.besonderheiten}</div>
       <a class="tour-download" href="${t.gpx}" download>➤ GPX herunterladen</a>
     `;
+
     galleryItem.addEventListener("click", (e) => {
       if (e.target.closest('.tour-download')) return;
       e.preventDefault();
@@ -672,6 +691,7 @@ function renderTouren() {
         loadTour(t.gpx);
       }, 100);
     });
+
     galleryView.appendChild(galleryItem);
   });
 }
@@ -768,7 +788,38 @@ function showAllTracks() {
       if (loadedCount === touren.length) {
         map.fitBounds(groupBounds);
       }
-    }).addTo(map);
+  })
+  .on('addline', e => {
+    const polyline = e.line; // Access the polyline
+
+    // Save original color for restoration
+    const originalColor = polyline.options.color || '#3388ff'; 
+
+    // Add tooltip on hover (bind tooltip to polyline)
+    polyline.bindTooltip(tour.name, {
+      sticky: true,
+      direction: 'top'
+    });
+
+    // Mouse over: change color
+    polyline.on('mouseover', () => {
+      polyline.setStyle({ color: 'red' });
+    });
+
+    // Mouse out: restore color
+    polyline.on('mouseout', () => {
+      polyline.setStyle({ color: originalColor });
+    });
+
+    // Add click functionality
+polyline.on('click', () => {
+  map.fitBounds(polyline.getBounds());
+  document.querySelector(".leaflet-tour-title").textContent = tour.name;
+  showGallery(true, tour); // ← Pass the tour to filter the gallery
+});
+
+  })
+  .addTo(map);
 
     allTracksLayers.push(gpxLayer);
   });
