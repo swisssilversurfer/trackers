@@ -208,7 +208,7 @@
 
   #galleryView {
     display: none;
-    padding: 72px 1.5rem 1.5rem 1.5rem; /* 64px header + 8px gap */
+    padding: 10px 1.5rem 1.5rem 1.5rem;
     flex-wrap: wrap;
     gap: 2rem;
     justify-content: center;
@@ -243,7 +243,7 @@
     font-weight: bold;
     font-size: 14px;
     box-shadow: 0 1px 4px rgba(0,0,0,0.2);
-    display: inline-flex;
+  
     align-items: flex-start;
     gap: 10px;
   }
@@ -341,7 +341,6 @@
     }
 
     .leaflet-tour-title {
-      display: inline-flex;
       align-items: flex-start;
       gap: 10px;
     }
@@ -350,7 +349,7 @@
       width: 100%;
     }
     #galleryView {
-      padding-top: 72px;
+      padding-top: 10px;
     }
   }
 </style>
@@ -683,8 +682,18 @@ function renderTouren() {
 
 function loadTour(gpxFile) {
   const tour = touren.find(t => t.gpx === gpxFile);
-  if (!tour) return;
-  document.querySelector(".leaflet-tour-title").textContent = tour.name;
+    if (!tour) return;
+    const tourTitleDiv = document.querySelector(".leaflet-tour-title");
+    tourTitleDiv.innerHTML = `
+    <div><strong>${tour.name}</strong></div>
+    <div style="font-weight:normal; font-size:12px;">
+      Strecke: ${tour.distanz}
+    </div>
+    <div style="font-weight:normal; font-size:12px;">
+      Belag: ${tour.strassenbelag}
+    </div>
+  `;
+
   if (currentTrack) map.removeLayer(currentTrack);
   allTracksLayers.forEach(layer => map.removeLayer(layer));
   allTracksLayers = [];
