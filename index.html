@@ -2,7 +2,7 @@
 <html lang="de">
 <head>
   <meta charset="UTF-8" />
-  <title>Motorradtouren & GPX-Tracks</title>
+  <title>Trackers Touren & GPX-Tracks</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
 
@@ -358,7 +358,7 @@
 
 <div id="header">
   <img src="images/Trackers.jpeg" alt="The Tracker's Logo" class="logo-img" />
-  <h1>Motorradtouren & GPS-Tracks</h1>
+  <h1>Touren & GPS-Tracks</h1>
   <button id="viewToggle">Galerie anzeigen</button>
   <button id="AllTracksBtn">Karte mit allen Tracks anzeigen</button>
   <div class="filter-dropdown">
@@ -371,7 +371,9 @@
           <option value="Frankreich">Frankreich</option>
           <option value="Italien">Italien</option>
           <option value="Marokko">Marokko</option>
+          <option value="Schweden">Schweiz</option>
           <option value="Schweiz">Schweiz</option>
+          <option value="Spanien">Schweiz</option>
           <option value="Europa">Europa</option>
         </select>
         <label for="levelFilter">Schwierigkeit:</label>
@@ -428,7 +430,9 @@ const flags = {
   "Italien": "data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='24' height='16'%3e%3crect width='8' height='16' fill='%23009641'/%3e%3crect x='8' width='8' height='16' fill='%23fff'/%3e%3crect x='16' width='8' height='16' fill='%23ce2b37'/%3e%3c/svg%3e",
   "Schweiz": "data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16'%3e%3crect width='16' height='16' fill='%23ff0000'/%3e%3crect x='6' y='3' width='4' height='10' fill='%23fff'/%3e%3crect x='3' y='6' width='10' height='4' fill='%23fff'/%3e%3c/svg%3e",
   "Europa": "data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='24' height='16'%3e%3crect width='24' height='16' fill='%230072c6'/%3e%3cg fill='%23ffd700'%3e%3ccircle cx='12' cy='3' r='0.9'/%3e%3ccircle cx='14.8' cy='3.8' r='0.9'/%3e%3ccircle cx='17' cy='6' r='0.9'/%3e%3ccircle cx='17.8' cy='8.8' r='0.9'/%3e%3ccircle cx='17' cy='11.6' r='0.9'/%3e%3ccircle cx='14.8' cy='13.8' r='0.9'/%3e%3ccircle cx='12' cy='14.6' r='0.9'/%3e%3ccircle cx='9.2' cy='13.8' r='0.9'/%3e%3ccircle cx='7' cy='11.6' r='0.9'/%3e%3ccircle cx='6.2' cy='8.8' r='0.9'/%3e%3ccircle cx='7' cy='6' r='0.9'/%3e%3ccircle cx='9.2' cy='3.8' r='0.9'/%3e%3c/g%3e%3c/svg%3e",
-  "Marokko": "data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='24' height='16'%3e%3crect width='24' height='16' fill='%23c1272d'/%3e%3cg transform='translate(12,8) scale(0.6)'%3e%3cpolygon points='0,-6 1.763,2.118 -5.706,-2.118 5.706,-2.118 -1.763,2.118' fill='none' stroke='%2300653a' stroke-width='1.5'/%3e%3c/g%3e%3c/svg%3e"
+  "Marokko": "data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='24' height='16'%3e%3crect width='24' height='16' fill='%23c1272d'/%3e%3cg transform='translate(12,8) scale(0.6)'%3e%3cpolygon points='0,-6 1.763,2.118 -5.706,-2.118 5.706,-2.118 -1.763,2.118' fill='none' stroke='%2300653a' stroke-width='1.5'/%3e%3c/g%3e%3c/svg%3e",
+  "Schweden": "data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='24' height='16'%3e%3crect width='24' height='16' fill='%23008cba'/%3e%3crect x='7' width='4' height='16' fill='%23ffc720'/%3e%3crect y='5' height='6' width='24' fill='%23ffc720'/%3e%3c/svg%3e",
+  "Spanien": "data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='24' height='16'%3e%3crect width='24' height='16' fill='%23aa151b'/%3e%3crect y='5' height='6' width='24' fill='%23f1bf00'/%3e%3c/svg%3e"
 };
 
 /* =======================
@@ -537,6 +541,32 @@ const touren = [
     besonderheiten: "Eventuell Passsperren wegen Schnee",
     region: "Marokko",
     schwierigkeit: "Leicht",
+    strassenbelag: "Gemischt"
+  },
+  {
+    name: "TET Schweden",
+    gpx: "gpx/SE Schweden.gpx",
+    bild: [
+      "images/SE Schweden.jpeg",
+    ],
+    beschreibung: "Auf dem TET einmal längs durch Schweden.",
+    distanz: "2022 km",
+    besonderheiten: "Keine",
+    region: "Schweden",
+    schwierigkeit: "Leicht",
+    strassenbelag: "Gemischt"
+  },
+  {
+    name: "Pyrenäen",
+    gpx: "gpx/ES Pyrenees.gpx",
+    bild: [
+      "images/ES Pyrenees.jpeg",
+    ],
+    beschreibung: "Tour durch die Pyrenäen mit Abstecher nach Andorra um zum Pic Negre.",
+    distanz: "661 km",
+    besonderheiten: "Tagesticket für Pic Negre erforderlich (erhältlich am Grenzposten)",
+    region: "Spanien",
+    schwierigkeit: "Mittel",
     strassenbelag: "Gemischt"
   }]
 
@@ -796,7 +826,7 @@ function showAllTracks() {
     const originalColor = polyline.options.color || '#3388ff'; 
 
     // Add tooltip on hover (bind tooltip to polyline)
-    polyline.bindTooltip(tour.name, {
+    polyline.bindTooltip(`${tour.name} - ${tour.distanz}`, {
       sticky: true,
       direction: 'top'
     });
