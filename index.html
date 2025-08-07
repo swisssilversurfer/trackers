@@ -518,6 +518,19 @@ const touren = [
     strassenbelag: "Off-road"
   },
   {
+    name: "Schweizer Pässe",
+    gpx: "gpx/CH Schweizer-Paesse.gpx",
+    bild: [
+      "images/CH Schweizer-Paesse.jpeg",
+    ],
+    beschreibung: "Nufenen, Tremola, Furka, Grimsel, Gurnigel, Jaun.",
+    distanz: "502 km",
+    besonderheiten: "Wintersperren beachten",
+    region: "Schweiz",
+    schwierigkeit: "Leicht",
+    strassenbelag: "Strasse"
+    },
+    {
     name: "Schwarzes Meer",
     gpx: "gpx/EU Schwarzes-Meer.gpx",
     bild: [
@@ -842,12 +855,12 @@ function showAllTracks() {
     });
 
     // Add click functionality
-polyline.on('click', () => {
-  map.fitBounds(polyline.getBounds());
-  document.querySelector(".leaflet-tour-title").textContent = tour.name;
-  showGallery(true, tour); // ← Pass the tour to filter the gallery
-});
-
+    polyline.on('click', () => {
+      map.fitBounds(polyline.getBounds());
+      document.querySelector(".leaflet-tour-title").textContent = tour.name;
+      showGallery(true, tour); // ← Pass the tour to filter the gallery
+  });
+  
   })
   .addTo(map);
 
