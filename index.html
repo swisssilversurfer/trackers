@@ -27,6 +27,7 @@
     align-items: center;
     gap: 1rem;
     flex-wrap: wrap;
+    z-index: 1000;
     height: 64px;
     box-sizing: border-box;
   }
@@ -99,6 +100,7 @@
     box-shadow: 0 2px 8px rgba(0,0,0,0.15);
     margin-top: 0.3rem;
     display: none;
+    z-index: 2000;
     min-width: 300px;
   }
 
@@ -162,20 +164,6 @@
 
   .leaflet-top {
     display: inline-flex;
-    align-items: flex-start;
-    gap: 10px;
-  }
-
-  .leaflet-tour-title {
-    background: rgba(255, 255, 255, 0.9);
-    padding: 4px 10px;
-    margin-top: 10px;
-    margin-left: 5px;
-    border-radius: 6px;
-    font-weight: bold;
-    font-size: 14px;
-    box-shadow: 0 1px 4px rgba(0,0,0,0.2);
-  
     align-items: flex-start;
     gap: 10px;
   }
@@ -246,17 +234,30 @@
     margin-bottom: 0.7rem;
   }
 
+  .leaflet-tour-title {
+    background: rgba(255, 255, 255, 0.9);
+    padding: 4px 10px;
+    margin-top: 10px;
+    margin-left: 5px;
+    border-radius: 6px;
+    font-weight: bold;
+    font-size: 14px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.2);
+  
+    align-items: flex-start;
+    gap: 10px;
+  }
+
   /* ---------- Responsive Anpassungen für Mobilgeräte ---------- */
 
   @media (max-width: 768px) {
     #header {
       position: sticky;
       top: 0;
+      z-index: 1000;
       flex-direction: column;
       align-items: stretch;
       height: auto;
-      z-index: 1000;
-      background-color: #fff; /* wichtig auf kleinen Screens */
     }
     
     #header h1 {
@@ -323,9 +324,8 @@
 
     #container {
       flex-direction: column;
-      height: 100vh;
-      margin-top: 64px; /* Platz für den Sticky Header */
-      box-sizing: border-box;
+      height: calc(100vh - 64px);
+      min-height: 0;
     }
 
     #map {
