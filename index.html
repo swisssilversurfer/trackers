@@ -808,25 +808,37 @@ polyline.bindTooltip(`
   className: 'custom-tooltip'
 });
 
+const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
 
+if (isTouchDevice) {
+  // Touch start: change color
+  polyline.on('touchstart', () => {
+    polyline.setStyle({ color: 'red' });
+  });
 
+  // Touch end: restore color
+  polyline.on('touchend', () => {
+    polyline.setStyle({ color: originalColor });
+  });
+} else {
+  // Mouse over: change color
+  polyline.on('mouseover', () => {
+    polyline.setStyle({ color: 'red' });
+  });
 
-    // Mouse over: change color
-    polyline.on('mouseover', () => {
-      polyline.setStyle({ color: 'red' });
-    });
+  // Mouse out: restore color
+  polyline.on('mouseout', () => {
+    polyline.setStyle({ color: originalColor });
+  });
+}
 
-    // Mouse out: restore color
-    polyline.on('mouseout', () => {
-      polyline.setStyle({ color: originalColor });
-    });
+// Add click functionality (works for both)
+polyline.on('click', () => {
+  map.fitBounds(polyline.getBounds());
+  document.querySelector(".leaflet-tour-title").textContent = tour.name;
+  showGallerySelected(tour); // ← Pass the tour to filter the gallery
+});
 
-    // Add click functionality
-    polyline.on('click', () => {
-      map.fitBounds(polyline.getBounds());
-      document.querySelector(".leaflet-tour-title").textContent = tour.name;
-      showGallerySelected(tour); // ← Pass the tour to filter the gallery
-    });
   
   })
   .addTo(map);
