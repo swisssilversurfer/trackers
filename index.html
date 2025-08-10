@@ -47,7 +47,8 @@
   }
 
   #showGalleryBtn,
-  #showAllTracksBtn {
+  #showAllTracksBtn,
+  #showAllTracksGalleryBtn {
     padding: 0.4rem 0.8rem;
     font-size: 0.8rem;
     cursor: pointer;
@@ -259,7 +260,8 @@
   }
 
   #showGalleryBtn,
-  #showAllTracksBtn {
+  #showAllTracksBtn,
+  #showAllTracksGalleryBtn {
       width: 100%;
       margin-left: 0;
       align-self: stretch;
@@ -329,7 +331,6 @@
   }
 }
 
-
   </style>
 </head>
 <body>
@@ -338,8 +339,9 @@
     <img src="images/Trackers.jpeg" alt="The Tracker's Logo" class="header-image" />
     <h1>Touren & GPS-Tracks</h1>
     <div class="flex-spacer"></div>
-    <button id="showGalleryBtn">Galerie anzeigen</button>
-    <button id="showAllTracksBtn">Karte mit allen Tracks anzeigen</button>
+    <button id="showGalleryBtn">Galerie</button>
+    <button id="showAllTracksBtn">Karte</button>
+    <button id="showAllTracksGalleryBtn">Alle Touren anzeigen</button>
     <div class="filter-dropdown">
       <button id="filterToggle" aria-haspopup="true" aria-expanded="false">Filter ▼</button>
       <div id="filterMenu" class="filter-menu" role="menu" aria-hidden="true">
@@ -561,6 +563,7 @@
   const filterResetBtn = document.getElementById("filterResetBtn");
   const showAllTracksBtn = document.getElementById("showAllTracksBtn");
   const showGalleryBtn = document.getElementById("showGalleryBtn");
+  const showAllTracksGalleryBtn = document.getElementById("showAllTracksGalleryBtn");
   const gallery = document.getElementById("gallery");
 
   let currentTrack;
@@ -573,6 +576,7 @@
     document.getElementById("gallery").style.display = "none";
     showGalleryBtn.style.display = "block";
     showAllTracksBtn.style.display = "none";
+    showAllTracksGalleryBtn.style.display = "none";
     filterDropdown.style.display = "none";
     if (!mapInitialized) {
       map = L.map('map').setView([45.1, 6.74], 11); // Susa valley coordinates
@@ -620,6 +624,7 @@
     document.getElementById("gallery").style.display = "flex";
     showGalleryBtn.style.display = "none";
     showAllTracksBtn.style.display = "block";
+    showAllTracksGalleryBtn.style.display = "none";
     filterDropdown.style.display = "block";
       renderTouren();
   }
@@ -631,7 +636,8 @@
     document.getElementById("gallery").style.display = "flex";
     showGalleryBtn.style.display = "none";
     showAllTracksBtn.style.display = "block";
-    filterDropdown.style.display = "block";
+    showAllTracksGalleryBtn.style.display = "block";
+    filterDropdown.style.display = "none";
       renderTouren(selectedTour); // Pass through
   }
 
@@ -793,28 +799,28 @@ function showAllTracks() {
     .on('addline', e => {
       const polyline = e.line;
 
-    // Smaller tooltip design
-    const tooltipContent = `
-      <div class="tooltip-wrapper" style="cursor:pointer; text-align:center; max-width: 110px; padding: 2px; white-space: normal; font-size: 11px; line-height: 1.2;">
-        <div style="font-weight: bold; margin-bottom: 2px; overflow-wrap: break-word;">${tour.name}</div>
-        <div style="font-weight: normal; color: #555; margin-bottom: 3px;">${tour.distanz}</div>
-        <img src="${tour.bild[0]}" alt="${tour.name}" style="width: 90px; height: auto; border-radius: 3px; box-shadow: 0 0 3px rgba(0,0,0,0.25);">
-      </div>
-    `;
+      // Smaller tooltip design
+      const tooltipContent = `
+        <div class="tooltip-wrapper" style="cursor:pointer; text-align:center; max-width: 110px; padding: 2px; white-space: normal; font-size: 11px; line-height: 1.2;">
+          <div style="font-weight: bold; margin-bottom: 2px; overflow-wrap: break-word;">${tour.name}</div>
+          <div style="font-weight: normal; color: #555; margin-bottom: 3px;">${tour.distanz}</div>
+          <img src="${tour.bild[0]}" alt="${tour.name}" style="width: 90px; height: auto; border-radius: 3px; box-shadow: 0 0 3px rgba(0,0,0,0.25);">
+        </div>
+      `;
 
-    // Permanent, clickable tooltip
-    polyline.bindTooltip(tooltipContent, {
-      permanent: true,
-      direction: 'top',
-      className: 'custom-tooltip',
-      interactive: true
-    });
+      // Permanent, clickable tooltip
+      polyline.bindTooltip(tooltipContent, {
+        permanent: true,
+        direction: 'top',
+        className: 'custom-tooltip',
+        interactive: true
+      });
 
-    // Click on tooltip opens gallery
-    polyline.getTooltip().on('click', () => {
-      document.querySelector(".leaflet-tour-title").textContent = tour.name;
-      showGallerySelected(tour);
-    });
+      // Click on tooltip opens gallery
+      polyline.getTooltip().on('click', () => {
+        document.querySelector(".leaflet-tour-title").textContent = tour.name;
+        showGallerySelected(tour);
+      });
 
       // Polyline click still zooms
       polyline.on('click', () => {
@@ -878,11 +884,47 @@ function closeFilterMenu() {
 // Show gallery view
   showGalleryBtn.addEventListener("click", () => showGallery(true));
 
+// Show gallery view when clicking on a track in the all-tracks view
+  showAllTracksGalleryBtn.addEventListener("click", () => showGallery(true));
+
 // Show all tracks
   showAllTracksBtn.addEventListener("click", () => showAllTracks(true));
 
 // Show gallery by default
   showGallery();
+
+  // One-time tip overlay
+if (!localStorage.getItem('tourClickHintShown')) {
+  const hint = document.createElement('div');
+  hint.textContent = '💡 Tip: Click a tour to view it on the map.';
+  hint.style.position = 'fixed';
+  hint.style.top = '70px'; // adjust depending on your header height
+  hint.style.left = '50%';
+  hint.style.transform = 'translateX(-50%)';
+  hint.style.background = 'rgba(0,0,0,0.85)';
+  hint.style.color = '#fff';
+  hint.style.padding = '8px 14px';
+  hint.style.borderRadius = '5px';
+  hint.style.fontSize = '14px';
+  hint.style.zIndex = 9999;
+  hint.style.opacity = '0';
+  hint.style.transition = 'opacity 0.5s ease';
+
+  document.body.appendChild(hint);
+
+  // Fade in
+  requestAnimationFrame(() => {
+    hint.style.opacity = '1';
+  });
+
+  // Fade out after 3 seconds
+  setTimeout(() => {
+    hint.style.opacity = '0';
+    setTimeout(() => hint.remove(), 500);
+  }, 3000);
+
+  localStorage.setItem('tourClickHintShown', 'true');
+}
 
   </script>
 
