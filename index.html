@@ -234,6 +234,102 @@
     max-width: 140px;
 }
 
+
+@media (max-width: 767px) {
+
+  #title-section {
+    flex-direction: column;
+    align-items: flex-start;
+    height: auto;
+    padding: 10px 15px;
+  }
+
+  #title-section > * {
+    flex-shrink: 1;
+    width: 100%; /* Stack all items full width */
+  }
+
+  #title-section h1 {
+    font-size: 1.25rem;
+    margin-bottom: 8px;
+  }
+
+  .header-image {
+    display: none;
+  }
+
+  #showGalleryBtn,
+  #showAllTracksBtn {
+      width: 100%;
+      margin-left: 0;
+      align-self: stretch;
+      text-align: center;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+  }
+
+  .filter-dropdown {
+    width: 100%;
+    display: flex;
+  }
+  
+  .filter-dropdown button {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .filter-menu {
+    width: 100%;
+    left: 0;
+    right: 0;
+    min-width: unset;
+    max-width: 100vw;
+    box-sizing: border-box;
+    padding: 1rem 0.5rem 0.5rem 0.5rem;
+    overflow-x: hidden;
+  }
+  
+  .filter-menu .filter-group {
+    width: 100%;
+    max-width: 100vw;
+    display: flex;
+    flex-direction: column;
+    gap: 0.7rem;
+  }
+  
+  .filter-menu .filter-group select,
+  #filterResetBtn {
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+    font-size: 1rem;
+    margin-left: 0;
+  }
+
+  /* Map & Gallery adjustments */
+
+  #map, #gallery {
+    height: calc(100vh - (64px * 2)); /* Increase available height */
+  }
+
+  /* Make gallery scrollable nicely on small */
+  #gallery {
+    padding: 10px 10px 10px 10px;
+    max-height: calc(100vh - 130px);
+  }
+
+  /* Gallery items can be full width or smaller */
+  .gallery-item {
+    width: 100%;
+    max-width: 400px;
+    height: auto;
+  }
+}
+
+
   </style>
 </head>
 <body>
@@ -561,6 +657,12 @@
       (!surfaceValue || t.strassenbelag.toLowerCase() === surfaceValue)
       );
     }
+
+      // Inform user if no tours match the filters
+      if (filtered.length === 0) {
+        gallery.innerHTML = `<div style="padding: 1rem; font-style: italic; color: #666;">Keine Touren gefunden, die den Filtern entsprechen.</div>`;
+      return; // stop rendering further
+      }
 
     filtered.forEach(t => {
     const galleryItem = document.createElement("div");
