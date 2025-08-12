@@ -522,6 +522,32 @@
         strassenbelag: "Gemischt"
       },
       {
+        name: "Strada dei Cannoni",
+        gpx: "gpx/IT Strada-dei-Cannoni.gpx",
+        bild: [
+          "images/IT Strada-dei-Cannoni.jpeg",
+        ],
+        beschreibung: "Militärstraße, die immer auf dem Kamm verläuft, auf der Wasserscheide zwischen dem Maira-Tal und dem Varaita-Tal.",
+        distanz: "57 km",
+        besonderheiten: "Für Motorfahrzeuge nur Dienstag und Donnerstag geöffnet",
+        region: "Italien",
+        schwierigkeit: "Leicht",
+        strassenbelag: "Off-road"
+      },
+      {
+        name: "Colle del Colombardo",
+        gpx: "gpx/IT Colle-del-Colombardo.gpx",
+        bild: [
+          "images/IT Colle-del-Colombardo.jpeg",
+        ],
+        beschreibung: "Schotterstrasse beim Susa-Tal mit eindrucksvoller Kapelle auf der Passhöhe.",
+        distanz: "33 km",
+        besonderheiten: "Für Motorfahrzeuge gesperrt 16.Oktober - 15. Mai",
+        region: "Italien",
+        schwierigkeit: "Leicht",
+        strassenbelag: "Off-road"
+      },
+      {
         name: "Route des Grandes Alpes",
         gpx: "gpx/FR Route-des-Grandes-Alpes.gpx",
         bild: [
@@ -571,6 +597,19 @@
         besonderheiten: "Keine",
         region: "Europa",
         schwierigkeit: "Leicht",
+        strassenbelag: "Gemischt"
+      },
+      {
+        name: "Balkan Rundtour",
+        gpx: "gpx/EU Balkantour.gpx",
+        bild: [
+          "images/EU Balkantour.jpeg",
+        ],
+        beschreibung: "Rundtour durch 14 Länder.",
+        distanz: "6280 km",
+        besonderheiten: "Keine",
+        region: "Europa",
+        schwierigkeit: "Mittel",
         strassenbelag: "Gemischt"
       },
       {
@@ -683,6 +722,9 @@
 
     // Function to render a single tour in the map
     function renderMapSingleTour(gpxFile) {
+    
+      currentViewMode = "map"
+
       const tour = touren.find(t => t.gpx === gpxFile);
       if (!tour) return;
       map.tourTitleDiv.innerHTML = `
@@ -1031,16 +1073,6 @@
     /* =======================
        BUTTON HANDLERS
        ======================= */
-
-    // Show gallery view
-    showGalleryBtn.addEventListener("click", () => {
-      if (currentViewMode === "grid") {
-        showGallery(null, "grid");
-      } else if (currentViewMode === "list") {
-        showGallery(null, "list");
-      }
-
-    })
     
     // Show gallery view
     showGalleryBtn.addEventListener("click", () => showGallery(null, lastGalleryViewMode));
@@ -1053,7 +1085,6 @@
 
     // Show gallery in grid view
     showGalleryGridViewBtn.addEventListener("click", () => showGallery(null, "grid"));
-
 
     /* =======================
        ACTIONS ON LOAD
