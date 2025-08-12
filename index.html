@@ -209,7 +209,8 @@
 
     .tour-desc,
     .tour-info,
-    .tour-besonderheiten {
+    .tour-besonderheiten,
+    .tour-strassenbelag {
       font-size: 0.9rem;
       color: #555;
       margin-bottom: 0.4rem;
@@ -1024,6 +1025,7 @@
           <div class="tour-desc">${t.beschreibung}</div>
           <div class="tour-info">Strecke: ${t.distanz}</div>
           <div class="tour-besonderheiten">Besonderheiten: ${t.besonderheiten}</div>
+          <div class="tour-strassenbelag">Strassenbelag: ${t.strassenbelag}</div>
           <a class="tour-download" href="${t.gpx}" download style="display: inline-block; margin-top: 0.5rem;">➤ GPX herunterladen</a>
         `;
 
