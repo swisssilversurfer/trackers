@@ -250,18 +250,24 @@
     .tour-table {
       width: 100%;
       border-collapse: collapse;
+      table-layout: fixed;
+      margin-top: 0;
     }
 
     .tour-table th,
     .tour-table td {
       border: 1px solid #ccc;
-      padding: 0.5rem 1rem;
+      padding: 0.25rem 1rem;
       text-align: left;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
     }
 
     .tour-table th {
       background-color: #f0f0f0;
       font-weight: bold;
+      width: 20%; /* Adjust based on column count */
     }
 
     .tour-table tr:hover {
@@ -276,7 +282,8 @@
       background: #eee;
       font-weight: bold;
       border-radius: 5px;
-      margin-top: 1rem;
+      margin-top: 0.5rem;
+           margin-top: 0rem;
       width: 100%;
       max-height: 50px;
     }
@@ -626,6 +633,7 @@
     let currentTrack;
     let allTracksLayers = [];
     let currentViewMode = "grid";  // default
+    let lastGalleryViewMode = "grid"; // to remember last view mode
 
     /* =======================
      CODE FOR MAP
@@ -720,6 +728,7 @@
     function renderMapFilteredTours() {
 
       initializeMap();
+      currentViewMode = "map"
 
       if (currentTrack) {
         map.removeLayer(currentTrack);
@@ -795,7 +804,12 @@
         allTracksLayers.push(gpxLayer);
       });
 
-      document.querySelector(".leaflet-tour-title").textContent = "Gefilterte Touren";
+      if (filtered.length === 0) {
+        document.querySelector(".leaflet-tour-title").textContent = "Keine Touren gefunden";
+      } else {
+        document.querySelector(".leaflet-tour-title").textContent = "Gefilterte Touren";
+      }
+    
     }
 
     /* =======================
@@ -836,6 +850,7 @@
 
     function renderGridView(filtered) {
 
+      lastGalleryViewMode = "grid";
       showGalleryListViewBtn.style.display = "block";
       showGalleryGridViewBtn.style.display = "none";
 
@@ -869,6 +884,8 @@
     // Function to render tours in list view
 
     function renderListView(filtered) {
+
+      lastGalleryViewMode = "list";
       showGalleryListViewBtn.style.display = "none";
       showGalleryGridViewBtn.style.display = "block";
 
@@ -968,6 +985,9 @@
       } else if (currentViewMode === "list") {
         showGallery(null, "list");
         closeFilterMenu();
+      } else if (currentViewMode === "map") {
+        renderMapFilteredTours();
+        closeFilterMenu();
       }
     });
 
@@ -975,11 +995,12 @@
     function onFilterChange() {
       if (currentViewMode === "grid") {
         showGallery(null, "grid");
-        closeFilterMenu();
       } else if (currentViewMode === "list") {
         showGallery(null, "list");
-        closeFilterMenu();
+      } else if (currentViewMode === "map") {
+        renderMapFilteredTours();
       }
+      closeFilterMenu();
     }
 
     // Function to get filtered tours based on selected filters
@@ -1018,8 +1039,12 @@
       } else if (currentViewMode === "list") {
         showGallery(null, "list");
       }
+
     })
     
+    // Show gallery view
+    showGalleryBtn.addEventListener("click", () => showGallery(null, lastGalleryViewMode));
+
     // Show map view
     showMapBtn.addEventListener("click", () => renderMapFilteredTours(true));
 
