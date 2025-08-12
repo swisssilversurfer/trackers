@@ -293,6 +293,50 @@
       margin-right: 0.5rem;
     }
 
+
+
+
+
+.carousel {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.carousel-images {
+  flex: 1;
+  overflow: hidden;
+}
+
+.carousel-arrow {
+  background: rgba(0,0,0,0.4);
+  color: white;
+  border: none;
+  padding: 0.5rem;
+  cursor: pointer;
+  font-size: 1.2rem;
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 2;
+}
+
+.carousel-arrow.left {
+  left: 5px;
+}
+
+.carousel-arrow.right {
+  right: 5px;
+}
+
+
+
+
+
+
+
+
+
     /* Specific styles for mobile devices */
 
     @media (max-width: 767px) {
@@ -471,9 +515,12 @@
     const touren = [
       {
         name: "Colle del Sommeiller",
-        gpx: "gpx/IT Bardonecchia-Colle-del-Sommeiller.gpx",
+        gpx: "gpx/IT-Bardonecchia-Colle-del-Sommeiller.gpx",
         bild: [
-          "images/IT Bardonecchia-Colle-del-Sommeiller.jpeg"
+          "images/IT-Bardonecchia-Colle-del-Sommeiller_01.jpeg",
+          "images/IT-Bardonecchia-Colle-del-Sommeiller_02.jpeg",
+          "images/IT-Bardonecchia-Colle-del-Sommeiller_03.jpeg",
+          
         ],
         beschreibung: "Schotterstrecke auf über 3000m – einer der höchsten legal befahrbaren Wege Europas.",
         distanz: "25 km",
@@ -484,9 +531,11 @@
       },
       {
         name: "Monte Jafferau",
-        gpx: "gpx/IT Monte-Jafferau.gpx",
+        gpx: "gpx/IT-Monte-Jafferau.gpx",
         bild: [
-          "images/IT Monte-Jafferau.jpeg"
+          "images/IT-Monte-Jafferau_01.jpeg",
+          "images/IT-Monte-Jafferau_02.jpeg",
+          "images/IT-Monte-Jafferau_03.jpeg",
         ],
         beschreibung: "Schotterstrecke mit Gipfelfestung.",
         distanz: "46 km",
@@ -497,9 +546,11 @@
       },
       {
         name: "Assietta-Kammstraße",
-        gpx: "gpx/IT Strada-del-Assietta.gpx",
+        gpx: "gpx/IT-Strada-del-Assietta.gpx",
         bild: [
-          "images/IT Strada-del-Assietta.jpeg"
+          "images/IT-Strada-del-Assietta_01.jpeg",
+          "images/IT-Strada-del-Assietta_02.jpeg",
+          "images/IT-Strada-del-Assietta_03.jpeg",
         ],
         beschreibung: "Panoramastraße entlang des Kamms mit Blick auf das Susa-Tal.",
         distanz: "53 km",
@@ -510,9 +561,11 @@
       },
       {
         name: "Lago d'Idro",
-        gpx: "gpx/IT Lago-Idro.gpx",
+        gpx: "gpx/IT-Lago-Idro.gpx",
         bild: [
-          "images/IT Lago-Idro.jpeg",
+          "images/IT-Lago-Idro_01.jpeg",
+          "images/IT-Lago-Idro_02.jpeg",
+          "images/IT-Lago-Idro_03.jpeg",
         ],
         beschreibung: "Rundtour beim Lago d'Idro mit mehreren Pässen und Schotterpassagen.",
         distanz: "158 km",
@@ -523,9 +576,11 @@
       },
       {
         name: "Strada dei Cannoni",
-        gpx: "gpx/IT Strada-dei-Cannoni.gpx",
+        gpx: "gpx/IT-Strada-dei-Cannoni.gpx",
         bild: [
-          "images/IT Strada-dei-Cannoni.jpeg",
+          "images/IT-Strada-dei-Cannoni_01.jpeg",
+          "images/IT-Strada-dei-Cannoni_02.jpeg",
+          "images/IT-Strada-dei-Cannoni_03.jpeg",
         ],
         beschreibung: "Militärstraße, die immer auf dem Kamm verläuft, auf der Wasserscheide zwischen dem Maira-Tal und dem Varaita-Tal.",
         distanz: "57 km",
@@ -536,9 +591,11 @@
       },
       {
         name: "Colle del Colombardo",
-        gpx: "gpx/IT Colle-del-Colombardo.gpx",
+        gpx: "gpx/IT-Colle-del-Colombardo.gpx",
         bild: [
-          "images/IT Colle-del-Colombardo.jpeg",
+          "images/IT-Colle-del-Colombardo_01.jpeg",
+          "images/IT-Colle-del-Colombardo_02.jpeg",
+          "images/IT-Colle-del-Colombardo_03.jpeg",
         ],
         beschreibung: "Schotterstrasse beim Susa-Tal mit eindrucksvoller Kapelle auf der Passhöhe.",
         distanz: "33 km",
@@ -549,9 +606,12 @@
       },
       {
         name: "Route des Grandes Alpes",
-        gpx: "gpx/FR Route-des-Grandes-Alpes.gpx",
+        gpx: "gpx/FR-Route-des-Grandes-Alpes.gpx",
         bild: [
-          "images/FR Route-des-Grandes-Alpes.jpeg"
+          "images/FR-Route-des-Grandes-Alpes_01.jpeg",
+          "images/FR-Route-des-Grandes-Alpes_02.jpeg",
+          "images/FR-Route-des-Grandes-Alpes_03.jpeg",
+          "images/FR-Route-des-Grandes-Alpes_04.jpeg",
         ],
         beschreibung: "Über 17 Pässe von Thonon-les-Bains am Genfer See nach Menton am Mittelmeer.",
         distanz: "736 km",
@@ -562,9 +622,11 @@
       },
       {
         name: "Grengiols - Heiligkreuz",
-        gpx: "gpx/CH Grengiols-Heiligkreuz.gpx",
+        gpx: "gpx/CH-Grengiols-Heiligkreuz.gpx",
         bild: [
-          "images/CH Grengiols-Heiligkreuz.jpeg",
+          "images/CH-Grengiols-Heiligkreuz_01.jpeg",
+          "images/CH-Grengiols-Heiligkreuz_02.jpeg",
+          "images/CH-Grengiols-Heiligkreuz_03.jpeg",
         ],
         beschreibung: "Legale off-road Strecke im Wallis.",
         distanz: "38 km",
@@ -575,9 +637,11 @@
       },
       {
         name: "Schweizer Pässe",
-        gpx: "gpx/CH Schweizer-Paesse.gpx",
+        gpx: "gpx/CH-Schweizer-Paesse.gpx",
         bild: [
-          "images/CH Schweizer-Paesse.jpeg",
+          "images/CH-Schweizer-Paesse_01.jpeg",
+          "images/CH-Schweizer-Paesse_02.jpeg",
+          "images/CH-Schweizer-Paesse_03.jpeg",
         ],
         beschreibung: "Nufenen, Tremola, Furka, Grimsel, Gurnigel, Jaun.",
         distanz: "502 km",
@@ -588,9 +652,12 @@
       },
       {
         name: "Schwarzes Meer",
-        gpx: "gpx/EU Schwarzes-Meer.gpx",
+        gpx: "gpx/EU-Schwarzes-Meer.gpx",
         bild: [
-          "images/EU Schwarzes-Meer.jpeg",
+          "images/EU-Schwarzes-Meer_01.jpeg",
+          "images/EU-Schwarzes-Meer_02.jpeg",
+          "images/EU-Schwarzes-Meer_03.jpeg",
+          "images/EU-Schwarzes-Meer_04.jpeg",
         ],
         beschreibung: "Rundtour durch Polen, Slowenien, Ungarn, Rumänien.",
         distanz: "4480 km",
@@ -601,9 +668,12 @@
       },
       {
         name: "Balkan Rundtour",
-        gpx: "gpx/EU Balkantour.gpx",
+        gpx: "gpx/EU-Balkantour.gpx",
         bild: [
-          "images/EU Balkantour.jpeg",
+          "images/EU-Balkantour_01.jpeg",
+          "images/EU-Balkantour_02.jpeg",
+          "images/EU-Balkantour_03.jpeg",
+          "images/EU-Balkantour_04.jpeg",
         ],
         beschreibung: "Rundtour durch 14 Länder.",
         distanz: "6280 km",
@@ -614,9 +684,14 @@
       },
       {
         name: "Marokko Rundtour",
-        gpx: "gpx/MA Marokko.gpx",
+        gpx: "gpx/MA-Marokko.gpx",
         bild: [
-          "images/MA Marokko.jpeg",
+          "images/MA-Marokko_01.jpeg",
+          "images/MA-Marokko_02.jpeg",
+          "images/MA-Marokko_03.jpeg",
+          "images/MA-Marokko_04.jpeg",
+          "images/MA-Marokko_05.jpeg",
+          "images/MA-Marokko_06.jpeg",
         ],
         beschreibung: "Rundtour durch Marokko - Canyons, Sahara & Hoher Atlas.",
         distanz: "2195 km",
@@ -627,9 +702,13 @@
       },
       {
         name: "TET Schweden",
-        gpx: "gpx/SE Schweden.gpx",
+        gpx: "gpx/SE-Schweden.gpx",
         bild: [
-          "images/SE Schweden.jpeg",
+          "images/SE-Schweden_01.jpeg",
+          "images/SE-Schweden_02.jpeg",
+          "images/SE-Schweden_03.jpeg",
+          "images/SE-Schweden_04.jpeg",
+          "images/SE-Schweden_05.jpeg",
         ],
         beschreibung: "Auf dem TET einmal längs durch Schweden.",
         distanz: "2022 km",
@@ -640,9 +719,11 @@
       },
       {
         name: "Pyrenäen",
-        gpx: "gpx/ES Pyrenees.gpx",
+        gpx: "gpx/ES-Pyrenees.gpx",
         bild: [
-          "images/ES Pyrenees.jpeg",
+          "images/ES-Pyrenees_01.jpeg",
+          "images/ES-Pyrenees_02.jpeg",
+          "images/ES-Pyrenees_03.jpeg",
         ],
         beschreibung: "Tour durch die Pyrenäen mit Abstecher nach Andorra um zum Pic Negre.",
         distanz: "661 km",
@@ -890,19 +971,32 @@
 
     // Function to render tours in grid view
 
-    function renderGridView(filtered) {
+function renderGridView(filtered) {
+  lastGalleryViewMode = "grid";
+  showGalleryListViewBtn.style.display = "block";
+  showGalleryGridViewBtn.style.display = "none";
 
-      lastGalleryViewMode = "grid";
-      showGalleryListViewBtn.style.display = "block";
-      showGalleryGridViewBtn.style.display = "none";
+  filtered.forEach((t, index) => {
+    const galleryItem = document.createElement("div");
+    galleryItem.className = "gallery-item";
+    galleryItem.dataset.trackName = t.name;
 
-      filtered.forEach(t => {
-        const galleryItem = document.createElement("div");
-        galleryItem.className = "gallery-item";
-        galleryItem.dataset.trackName = t.name;
+    // Build carousel HTML with your exact image paths
+    const images = t.bild.map((filename, i) =>
+      `<img src="${filename}" 
+            alt="${t.name}" 
+            class="carousel-image" 
+            style="max-width: 100%; border-radius: 5px; display: ${i === 0 ? 'block' : 'none'};">`
+    ).join("");
 
-        galleryItem.innerHTML = `
-      <img src="${t.bild[0]}" alt="${t.name}" style="max-width: 100%; border-radius: 5px;">
+    galleryItem.innerHTML = `
+      <div class="carousel" data-tour="${index}">
+        <button class="carousel-arrow left">&#10094;</button>
+        <div class="carousel-images">
+          ${images}
+        </div>
+        <button class="carousel-arrow right">&#10095;</button>
+      </div>
       <div class="tour-title" style="font-weight: bold; margin-top: 0.5rem;">
         <img src="${flags[t.region] || ''}" alt="${t.region}" class="flag" style="height: 16px; vertical-align: middle; margin-right: 0.5rem;" />
         ${t.name}
@@ -913,15 +1007,53 @@
       <a class="tour-download" href="${t.gpx}" download style="display: inline-block; margin-top: 0.5rem;">➤ GPX herunterladen</a>
     `;
 
-        // Show tour in map when clicked
-        galleryItem.addEventListener("click", () => {
-          initializeMap();
-          renderMapSingleTour(t.gpx);
-        });
+    // Click on image area opens map
+    galleryItem.querySelector(".carousel-images").addEventListener("click", () => {
+      initializeMap();
+      renderMapSingleTour(t.gpx);
+    });
 
-        gallery.appendChild(galleryItem);
-      });
-    }
+    // Click on title opens map (still works too)
+    galleryItem.querySelector(".tour-title").addEventListener("click", () => {
+      initializeMap();
+      renderMapSingleTour(t.gpx);
+    });
+
+    gallery.appendChild(galleryItem);
+  });
+
+  // Enable carousel navigation after items are added
+  setupCarousels();
+}
+
+
+    // Function to setup carousels for grid view
+
+function setupCarousels() {
+  document.querySelectorAll(".carousel").forEach(carousel => {
+    const images = carousel.querySelectorAll(".carousel-image");
+    let currentIndex = 0;
+
+    carousel.querySelector(".left").addEventListener("click", e => {
+      e.stopPropagation(); // prevent triggering map click
+      images[currentIndex].style.display = "none";
+      currentIndex = (currentIndex - 1 + images.length) % images.length;
+      images[currentIndex].style.display = "block";
+    });
+
+    carousel.querySelector(".right").addEventListener("click", e => {
+      e.stopPropagation(); // prevent triggering map click
+      images[currentIndex].style.display = "none";
+      currentIndex = (currentIndex + 1) % images.length;
+      images[currentIndex].style.display = "block";
+    });
+  });
+}
+
+
+
+
+
 
     // Function to render tours in list view
 
