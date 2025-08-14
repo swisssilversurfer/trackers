@@ -1,0 +1,293 @@
+    const touren = [
+      {
+        name: "Colle del Sommeiller",
+        gpx: "gpx/IT-Bardonecchia-Colle-del-Sommeiller.gpx",
+        bild: [
+          "images/IT-Bardonecchia-Colle-del-Sommeiller_01.jpeg",
+          "images/IT-Bardonecchia-Colle-del-Sommeiller_02.jpeg",
+          "images/IT-Bardonecchia-Colle-del-Sommeiller_03.jpeg",
+          
+        ],
+        beschreibung: "Schotterstrecke auf über 3000m – einer der höchsten legal befahrbaren Wege Europas.",
+        distanz: "25 km",
+        besonderheiten: "Für Motorfahrzeuge geschlossen Dienstag & Donnerstag. Mautpflicht (8 EUR zu zahlen am Mauthäuschen).",
+        region: "Italien",
+        schwierigkeit: "Mittel",
+        strassenbelag: "Off-road"
+      },
+      {
+        name: "Monte Jafferau",
+        gpx: "gpx/IT-Monte-Jafferau.gpx",
+        bild: [
+          "images/IT-Monte-Jafferau_01.jpeg",
+          "images/IT-Monte-Jafferau_02.jpeg",
+          "images/IT-Monte-Jafferau_03.jpeg",
+        ],
+        beschreibung: "Schotterstrecke mit Gipfelfestung.",
+        distanz: "46 km",
+        besonderheiten: "Geschlossen für Motorfahrzeuge Montag, Freitag, Sonntag",
+        region: "Italien",
+        schwierigkeit: "Mittel",
+        strassenbelag: "Off-road"
+      },
+      {
+        name: "Assietta-Kammstraße",
+        gpx: "gpx/IT-Strada-del-Assietta.gpx",
+        bild: [
+          "images/IT-Strada-del-Assietta_01.jpeg",
+          "images/IT-Strada-del-Assietta_02.jpeg",
+          "images/IT-Strada-del-Assietta_03.jpeg",
+        ],
+        beschreibung: "Panoramastraße entlang des Kamms mit Blick auf das Susa-Tal.",
+        distanz: "53 km",
+        besonderheiten: "Geschlossen für Motorfahrzeuge Mittwoch & Samstag",
+        region: "Italien",
+        schwierigkeit: "Leicht",
+        strassenbelag: "Off-road"
+      },
+      {
+        name: "Lago d'Idro",
+        gpx: "gpx/IT-Lago-Idro.gpx",
+        bild: [
+          "images/IT-Lago-Idro_01.jpeg",
+          "images/IT-Lago-Idro_02.jpeg",
+          "images/IT-Lago-Idro_03.jpeg",
+        ],
+        beschreibung: "Rundtour beim Lago d'Idro mit mehreren Pässen und Schotterpassagen.",
+        distanz: "158 km",
+        besonderheiten: "Keine",
+        region: "Italien",
+        schwierigkeit: "Leicht",
+        strassenbelag: "Gemischt"
+      },
+      {
+        name: "Strada dei Cannoni",
+        gpx: "gpx/IT-Strada-dei-Cannoni.gpx",
+        bild: [
+          "images/IT-Strada-dei-Cannoni_01.jpeg",
+        ],
+        beschreibung: "Alte Militärstraße zwischen dem Maira-Tal und dem Varaita-Tal.",
+        distanz: "57 km",
+        besonderheiten: "Für Motorfahrzeuge nur Dienstag und Donnerstag geöffnet",
+        region: "Italien",
+        schwierigkeit: "Leicht",
+        strassenbelag: "Off-road"
+      },
+      {
+        name: "Colle del Colombardo",
+        gpx: "gpx/IT-Colle-del-Colombardo.gpx",
+        bild: [
+          "images/IT-Colle-del-Colombardo_01.jpeg",
+          "images/IT-Colle-del-Colombardo_02.jpeg",
+          "images/IT-Colle-del-Colombardo_03.jpeg",
+        ],
+        beschreibung: "Schotterstrasse beim Susa-Tal mit eindrucksvoller Kapelle auf der Passhöhe.",
+        distanz: "33 km",
+        besonderheiten: "Für Motorfahrzeuge gesperrt 16.Oktober - 15. Mai",
+        region: "Italien",
+        schwierigkeit: "Leicht",
+        strassenbelag: "Off-road"
+      },
+      {
+        name: "Ligurische Grenzkammstraße",
+        gpx: "gpx/IT-LGKS.gpx",
+        bild: [
+          "images/IT-LGKS_01.jpeg",
+          "images/IT-LGKS_02.jpeg",
+          "images/IT-LGKS_03.jpeg",
+        ],
+        beschreibung: "Spektakuläre unbefestigte ehemalige Militärstrasse in den Seealpen.",
+        distanz: "120 km",
+        besonderheiten: "Für Motorfahrzeuge Dienstag und Donnerstag gesperrt.",
+        region: "Italien",
+        schwierigkeit: "Mittel",
+        strassenbelag: "Off-road"
+      },
+      {
+        name: "Maira-Stura-Kammstraße",
+        gpx: "gpx/IT-Maira-Stura.gpx",
+        bild: [
+          "images/IT-Maira-Stura_01.jpeg",
+          "images/IT-Maira-Stura_02.jpeg",
+          "images/IT-Maira-Stura_03.jpeg",
+        ],
+        beschreibung: "Ehemalige Militär-Höhenstrasse in den Seealpen.",
+        distanz: "155 km",
+        besonderheiten: "Abschnitt Grange Selvest - Colle del Preit für Motorfahrzeuge gesperrt 1. Juli - 15. September",
+        region: "Italien",
+        schwierigkeit: "Leicht",
+        strassenbelag: "Off-road"
+      },
+      {
+        name: "Dolomiten-Rundtour",
+        gpx: "gpx/IT-Dolomiten.gpx",
+        bild: [
+          "images/IT-Dolomiten_01.jpeg",
+          "images/IT-Dolomiten_02.jpeg",
+          "images/IT-Dolomiten_03.jpeg",
+        ],
+        beschreibung: "Rundtour durch die Dolomiten.",
+        distanz: "351 km",
+        besonderheiten: "Keine",
+        region: "Italien",
+        schwierigkeit: "Leicht",
+        strassenbelag: "Strasse"
+      },
+      {
+        name: "Sizilien & Süditalien",
+        gpx: "gpx/IT-Sizilien.gpx",
+        bild: [
+          "images/IT-Sizilien_01.jpeg",
+          "images/IT-Sizilien_02.jpeg",
+          "images/IT-Sizilien_03.jpeg",
+        ],
+        beschreibung: "Quer durch Sizilien und Süditalien.",
+        distanz: "2055 km",
+        besonderheiten: "Keine",
+        region: "Italien",
+        schwierigkeit: "Leicht",
+        strassenbelag: "Strasse"
+      },
+      {
+        name: "Passo Dordona & Passo San Marco",
+        gpx: "gpx/IT-Passo-Dordona.gpx",
+        bild: [
+          "images/IT-Passo-Dordona_01.jpeg",
+          "images/IT-Passo-Dordona_02.jpeg",
+          "images/IT-Passo-Dordona_03.jpeg",
+        ],
+        beschreibung: "Schmale und steile Strecke in der Lombardei.",
+        distanz: "120 km",
+        besonderheiten: "Mautkarte für Passo Dordona erforderlich (erhältlich in Bars in Berbenno di Valtellina).",
+        region: "Italien",
+        schwierigkeit: "Mittel",
+        strassenbelag: "Off-road"
+      },
+      {
+        name: "Route des Grandes Alpes",
+        gpx: "gpx/FR-Route-des-Grandes-Alpes.gpx",
+        bild: [
+          "images/FR-Route-des-Grandes-Alpes_01.jpeg",
+          "images/FR-Route-des-Grandes-Alpes_02.jpeg",
+          "images/FR-Route-des-Grandes-Alpes_03.jpeg",
+          "images/FR-Route-des-Grandes-Alpes_04.jpeg",
+        ],
+        beschreibung: "Über 17 Pässe von Thonon-les-Bains am Genfer See nach Menton am Mittelmeer.",
+        distanz: "736 km",
+        besonderheiten: "Bergpässe möglicherweise für Veranstaltungen gesperrt",
+        region: "Frankreich",
+        schwierigkeit: "Leicht",
+        strassenbelag: "Strasse"
+      },
+      {
+        name: "Grengiols - Heiligkreuz",
+        gpx: "gpx/CH-Grengiols-Heiligkreuz.gpx",
+        bild: [
+          "images/CH-Grengiols-Heiligkreuz_01.jpeg",
+          "images/CH-Grengiols-Heiligkreuz_02.jpeg",
+          "images/CH-Grengiols-Heiligkreuz_03.jpeg",
+        ],
+        beschreibung: "Legale off-road Strecke im Wallis.",
+        distanz: "38 km",
+        besonderheiten: "Mautpflichtig (CHF 25 pro Tag)",
+        region: "Schweiz",
+        schwierigkeit: "Leicht",
+        strassenbelag: "Off-road"
+      },
+      {
+        name: "Schweizer Pässe",
+        gpx: "gpx/CH-Schweizer-Paesse.gpx",
+        bild: [
+          "images/CH-Schweizer-Paesse_01.jpeg",
+          "images/CH-Schweizer-Paesse_02.jpeg",
+          "images/CH-Schweizer-Paesse_03.jpeg",
+        ],
+        beschreibung: "Nufenen, Tremola, Furka, Grimsel, Gurnigel, Jaun.",
+        distanz: "502 km",
+        besonderheiten: "Wintersperren beachten",
+        region: "Schweiz",
+        schwierigkeit: "Leicht",
+        strassenbelag: "Strasse"
+      },
+      {
+        name: "Schwarzes Meer",
+        gpx: "gpx/EU-Schwarzes-Meer.gpx",
+        bild: [
+          "images/EU-Schwarzes-Meer_01.jpeg",
+          "images/EU-Schwarzes-Meer_02.jpeg",
+          "images/EU-Schwarzes-Meer_03.jpeg",
+          "images/EU-Schwarzes-Meer_04.jpeg",
+        ],
+        beschreibung: "Tour durch Polen, Slowakei, Ungarn, Rumänien bis zum Schwarzen Meer.",
+        distanz: "4480 km",
+        besonderheiten: "Keine",
+        region: "Europa",
+        schwierigkeit: "Leicht",
+        strassenbelag: "Gemischt"
+      },
+      {
+        name: "Balkan Rundtour",
+        gpx: "gpx/EU-Balkantour.gpx",
+        bild: [
+          "images/EU-Balkantour_01.jpeg",
+          "images/EU-Balkantour_02.jpeg",
+          "images/EU-Balkantour_03.jpeg",
+          "images/EU-Balkantour_04.jpeg",
+        ],
+        beschreibung: "Rundtour durch (fast) alle Balkan-Länder.",
+        distanz: "6280 km",
+        besonderheiten: "Keine",
+        region: "Europa",
+        schwierigkeit: "Mittel",
+        strassenbelag: "Gemischt"
+      },
+      {
+        name: "Marokko Rundtour",
+        gpx: "gpx/MA-Marokko.gpx",
+        bild: [
+          "images/MA-Marokko_01.jpeg",
+          "images/MA-Marokko_02.jpeg",
+          "images/MA-Marokko_03.jpeg",
+          "images/MA-Marokko_04.jpeg",
+          "images/MA-Marokko_05.jpeg",
+          "images/MA-Marokko_06.jpeg",
+        ],
+        beschreibung: "Rundtour durch Marokko - Canyons, Sahara & Hoher Atlas.",
+        distanz: "2195 km",
+        besonderheiten: "Eventuell Passsperren wegen Schnee",
+        region: "Marokko",
+        schwierigkeit: "Leicht",
+        strassenbelag: "Gemischt"
+      },
+      {
+        name: "TET Schweden",
+        gpx: "gpx/SE-Schweden.gpx",
+        bild: [
+          "images/SE-Schweden_01.jpeg",
+          "images/SE-Schweden_02.jpeg",
+          "images/SE-Schweden_03.jpeg",
+          "images/SE-Schweden_04.jpeg",
+          "images/SE-Schweden_05.jpeg",
+        ],
+        beschreibung: "Auf dem TET einmal längs durch Schweden.",
+        distanz: "2022 km",
+        besonderheiten: "Keine",
+        region: "Schweden",
+        schwierigkeit: "Leicht",
+        strassenbelag: "Gemischt"
+      },
+      {
+        name: "Pyrenäen",
+        gpx: "gpx/ES-Pyrenees.gpx",
+        bild: [
+          "images/ES-Pyrenees_01.jpeg",
+          "images/ES-Pyrenees_02.jpeg",
+          "images/ES-Pyrenees_03.jpeg",
+        ],
+        beschreibung: "Tour durch die Pyrenäen mit Abstecher nach Andorra und zum Pic Negre.",
+        distanz: "661 km",
+        besonderheiten: "Tagesticket für Pic Negre erforderlich (erhältlich am Grenzposten)",
+        region: "Spanien",
+        schwierigkeit: "Mittel",
+        strassenbelag: "Gemischt"
+      }];
