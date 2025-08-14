@@ -112,7 +112,7 @@
           "images/IT-Maira-Stura_03.jpeg",
         ],
         beschreibung: "Ehemalige Militär-Höhenstrasse in den Seealpen.",
-        distanz: "155 km",
+        distanz: "90 km",
         besonderheiten: "Abschnitt Grange Selvest - Colle del Preit für Motorfahrzeuge gesperrt 1. Juli - 15. September",
         region: "Italien",
         schwierigkeit: "Leicht",
