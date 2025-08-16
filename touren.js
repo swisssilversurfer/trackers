@@ -180,6 +180,21 @@
         strassenbelag: "Strasse"
       },
       {
+        name: "Lacets de Montvernier & Col de la Madeleine",
+        gpx: "gpx/FR-Lacets-de-Montvernier.gpx",
+        bild: [
+          "images/FR-Lacets-de-Montvernier_01.jpeg",
+          "images/FR-Lacets-de-Montvernier_02.jpeg",
+          "images/FR-Lacets-de-Montvernier_03.jpeg",
+        ],
+        beschreibung: "17 Spitzkehren auf vier Kilometer Länge über 300 Höhenmeter. Anschliessend weiter auf Schotter zum Col de la Madeleine.",
+        distanz: "60 km",
+        besonderheiten: "Möglicherweise für Veranstaltungen gesperrt",
+        region: "Frankreich",
+        schwierigkeit: "Leicht",
+        strassenbelag: "Gemischt"
+      },
+      {
         name: "Grengiols - Heiligkreuz",
         gpx: "gpx/CH-Grengiols-Heiligkreuz.gpx",
         bild: [
