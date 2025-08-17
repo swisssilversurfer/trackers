@@ -59,7 +59,9 @@
     #showGalleryBtn,
     #showMapBtn,
     #showGalleryListViewBtn,
-    #showGalleryGridViewBtn {
+    #showGalleryGridViewBtn,
+    #showGalleryGridViewMeteoBtn,
+    #BackBtn {
       padding: 0.4rem 0.8rem;
       font-size: 0.8rem;
       cursor: pointer;
@@ -383,7 +385,9 @@
       #showGalleryBtn,
       #showMapBtn,
       #showGalleryListViewBtn,
-      #showGalleryGridViewBtn {
+      #showGalleryGridViewBtn,
+      #showGalleryGridViewMeteoBtn,
+      #BackBtn {
         width: 100%;
         margin-left: 0;
         align-self: stretch;
@@ -468,6 +472,8 @@
     <button id="showGalleryBtn">Galerie</button>
     <button id="showGalleryListViewBtn">Listenansicht</button>
     <button id="showGalleryGridViewBtn">Gitteransicht</button>
+    <button id="showGalleryGridViewMeteoBtn">Wetter</button>
+    <button id="BackBtn">Zurück</button>
     <div class="filter-dropdown">
       <button id="filterToggle" aria-haspopup="true" aria-expanded="false">Filter ▼</button>
       <div id="filterMenu" class="filter-menu" role="menu" aria-hidden="true">
@@ -543,7 +549,10 @@
     const showGalleryBtn = document.getElementById("showGalleryBtn");
     const showGalleryListViewBtn = document.getElementById("showGalleryListViewBtn");
     const showGalleryGridViewBtn = document.getElementById("showGalleryGridViewBtn");
+    const showGalleryGridViewMeteoBtn = document.getElementById("showGalleryGridViewMeteoBtn");
+    const BackBtn = document.getElementById("BackBtn");
     const gallery = document.getElementById("gallery");
+    
 
     let currentTrack;
     let allTracksLayers = [];
@@ -562,6 +571,8 @@
       showMapBtn.style.display = "none";
       showGalleryListViewBtn.style.display = "none";
       showGalleryGridViewBtn.style.display = "none";
+      showGalleryGridViewMeteoBtn.style.display = "none";
+      BackBtn.style.display = "none";
       filterDropdown.style.display = "block";
 
       if (!mapInitialized) {
@@ -762,6 +773,8 @@
         renderGridView(filtered);
       } else if (viewMode === "list") {
         renderListView(filtered);
+      } else if (viewMode === "meteo") {
+        renderGridViewMeteo(filtered);
       }
     }
 
@@ -771,6 +784,8 @@
       lastGalleryViewMode = "grid";
       showGalleryListViewBtn.style.display = "block";
       showGalleryGridViewBtn.style.display = "none";
+      showGalleryGridViewMeteoBtn.style.display = "block";
+      BackBtn.style.display = "none";
 
       filtered.forEach((t, index) => {
         const galleryItem = document.createElement("div");
@@ -847,6 +862,50 @@
       });
     }
 
+    // Function to render tours in grid view with weather widget
+
+    function renderGridViewMeteo(filtered) {
+      lastGalleryViewMode = "grid";
+      filterDropdown.style.display = "none";
+      showMapBtn.style.display = "none";
+      showGalleryListViewBtn.style.display = "none";
+      showGalleryGridViewBtn.style.display = "none";
+      showGalleryGridViewMeteoBtn.style.display = "none";
+      BackBtn.style.display = "block";
+
+      filtered.forEach((t, index) => {
+        const galleryItem = document.createElement("div");
+        galleryItem.className = "gallery-item";
+        galleryItem.dataset.trackName = t.name;
+
+        galleryItem.innerHTML = `
+
+          <div class="tour-title" style="font-weight: bold; margin-top: 0.1rem;">
+            <img src="${flags[t.region] || ''}" alt="${t.region}" class="flag" style="height: 16px; vertical-align: middle; margin-right: 0.1rem;" />
+            ${t.name}
+          </div>
+          
+          <!-- Weather Widget -->
+          <div class="tour-weather" style="margin-top: 1rem;">
+          <iframe
+            src="https://www.meteoblue.com/de/weather/widget/daily/${t.cityId.toLowerCase().replace(/\s+/g,'-')}_${t.region.toLowerCase()}_${t.cityId}?geoloc=fixed&days=5&tempunit=CELSIUS&windunit=KILOMETER_PER_HOUR&precipunit=MILLIMETER&coloured=coloured&pictoicon=1&maxtemperature=1&mintemperature=1&windspeed=1&windgust=0&winddirection=0&uv=0&humidity=0&precipitation=1&precipitationprobability=1&spot=0&pressure=0&layout=light"
+            frameborder="0"
+            scrolling="NO"
+            allowtransparency="true"
+            sandbox="allow-same-origin allow-scripts allow-popups allow-popups-to-escape-sandbox"
+            style="width: 230px; height: 270px">
+          </iframe>
+          <div>
+            <a href="https://www.meteoblue.com/de/weather/week/${t.cityId.toLowerCase().replace(/\s+/g,'-')}_${t.region.toLowerCase()}_${t.cityId}" target="_blank" rel="noopener">meteoblue</a>
+          </div>
+        </div>
+        `;
+
+        gallery.appendChild(galleryItem);
+      });
+
+    }
+
     // Function to render tours in list view
 
     function renderListView(filtered) {
@@ -854,6 +913,8 @@
       lastGalleryViewMode = "list";
       showGalleryListViewBtn.style.display = "none";
       showGalleryGridViewBtn.style.display = "block";
+      showGalleryGridViewMeteoBtn.style.display = "none";
+      BackBtn.style.display = "none";
 
       const grouped = {};
       filtered.forEach(t => {
@@ -1009,6 +1070,12 @@
 
     // Show gallery in grid view
     showGalleryGridViewBtn.addEventListener("click", () => showGallery(null, "grid"));
+
+    // Show gallery in grid view with weather widget
+    showGalleryGridViewMeteoBtn.addEventListener("click", () => showGallery(null, "meteo"));
+
+    // Show gallery in grid view coming from weather widget view
+    BackBtn.addEventListener("click", () => showGallery(null, "grid"));
 
     /* =======================
        ACTIONS ON LOAD

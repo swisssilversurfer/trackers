@@ -13,7 +13,8 @@
         besonderheiten: "Für Motorfahrzeuge geschlossen Dienstag & Donnerstag. Mautpflicht (8 EUR zu zahlen am Mauthäuschen).",
         region: "Italien",
         schwierigkeit: "Mittel",
-        strassenbelag: "Off-road"
+        strassenbelag: "Off-road",
+        cityId: "3182362",
       },
       {
         name: "Monte Jafferau",
@@ -28,8 +29,9 @@
         besonderheiten: "Geschlossen für Motorfahrzeuge Montag, Freitag, Sonntag",
         region: "Italien",
         schwierigkeit: "Mittel",
-        strassenbelag: "Off-road"
-      },
+        strassenbelag: "Off-road",
+        cityId: "3182362",
+        },
       {
         name: "Assietta-Kammstraße",
         gpx: "gpx/IT-Strada-del-Assietta.gpx",
@@ -43,7 +45,8 @@
         besonderheiten: "Geschlossen für Motorfahrzeuge Mittwoch & Samstag",
         region: "Italien",
         schwierigkeit: "Leicht",
-        strassenbelag: "Off-road"
+        strassenbelag: "Off-road",
+        cityId: "3182362",
       },
       {
         name: "Lago d'Idro",
@@ -58,7 +61,8 @@
         besonderheiten: "Keine",
         region: "Italien",
         schwierigkeit: "Leicht",
-        strassenbelag: "Gemischt"
+        strassenbelag: "Gemischt",
+        cityId: "6534531",
       },
       {
         name: "Strada dei Cannoni",
@@ -71,7 +75,8 @@
         besonderheiten: "Für Motorfahrzeuge nur Dienstag und Donnerstag geöffnet",
         region: "Italien",
         schwierigkeit: "Leicht",
-        strassenbelag: "Off-road"
+        strassenbelag: "Off-road",
+        cityId: "3166078",
       },
       {
         name: "Colle del Colombardo",
@@ -86,7 +91,8 @@
         besonderheiten: "Für Motorfahrzeuge gesperrt 16.Oktober - 15. Mai",
         region: "Italien",
         schwierigkeit: "Leicht",
-        strassenbelag: "Off-road"
+        strassenbelag: "Off-road",
+        cityId: "3181782",
       },
       {
         name: "Ligurische Grenzkammstraße",
@@ -101,7 +107,8 @@
         besonderheiten: "Für Motorfahrzeuge Dienstag und Donnerstag gesperrt.",
         region: "Italien",
         schwierigkeit: "Mittel",
-        strassenbelag: "Off-road"
+        strassenbelag: "Off-road",
+        cityId: "2973180",
       },
       {
         name: "Maira-Stura-Kammstraße",
@@ -116,7 +123,8 @@
         besonderheiten: "Abschnitt Grange Selvest - Colle del Preit für Motorfahrzeuge gesperrt 1. Juli - 15. September",
         region: "Italien",
         schwierigkeit: "Leicht",
-        strassenbelag: "Off-road"
+        strassenbelag: "Off-road",
+        cityId: "3177626",
       },
       {
         name: "Dolomiten-Rundtour",
@@ -131,7 +139,8 @@
         besonderheiten: "Keine",
         region: "Italien",
         schwierigkeit: "Leicht",
-        strassenbelag: "Strasse"
+        strassenbelag: "Strasse",
+        cityId: "3181913",
       },
       {
         name: "Sizilien & Süditalien",
@@ -146,7 +155,8 @@
         besonderheiten: "Keine",
         region: "Italien",
         schwierigkeit: "Leicht",
-        strassenbelag: "Strasse"
+        strassenbelag: "Strasse",
+        cityId: "2525068",
       },
       {
         name: "Passo Dordona & Passo San Marco",
@@ -161,7 +171,8 @@
         besonderheiten: "Mautkarte für Passo Dordona erforderlich (erhältlich in Bars in Berbenno di Valtellina).",
         region: "Italien",
         schwierigkeit: "Mittel",
-        strassenbelag: "Off-road"
+        strassenbelag: "Off-road",
+        cityId: "3182173",
       },
       {
         name: "Route des Grandes Alpes",
@@ -177,7 +188,8 @@
         besonderheiten: "Bergpässe möglicherweise für Veranstaltungen gesperrt",
         region: "Frankreich",
         schwierigkeit: "Leicht",
-        strassenbelag: "Strasse"
+        strassenbelag: "Strasse",
+        cityId: "3014258",
       },
       {
         name: "Lacets de Montvernier & Col de la Madeleine",
@@ -192,7 +204,8 @@
         besonderheiten: "Möglicherweise für Veranstaltungen gesperrt",
         region: "Frankreich",
         schwierigkeit: "Leicht",
-        strassenbelag: "Gemischt"
+        strassenbelag: "Gemischt",
+        cityId: "2979303",
       },
       {
         name: "Grengiols - Heiligkreuz",
@@ -207,7 +220,8 @@
         besonderheiten: "Mautpflichtig (CHF 25 pro Tag)",
         region: "Schweiz",
         schwierigkeit: "Leicht",
-        strassenbelag: "Off-road"
+        strassenbelag: "Off-road",
+        cityId: "2660511",
       },
       {
         name: "Schweizer Pässe",
@@ -222,7 +236,8 @@
         besonderheiten: "Wintersperren beachten",
         region: "Schweiz",
         schwierigkeit: "Leicht",
-        strassenbelag: "Strasse"
+        strassenbelag: "Strasse",
+        cityId: "2661750",
       },
       {
         name: "Schwarzes Meer",
@@ -238,7 +253,8 @@
         besonderheiten: "Keine",
         region: "Europa",
         schwierigkeit: "Leicht",
-        strassenbelag: "Gemischt"
+        strassenbelag: "Gemischt",
+        cityId: "664518",
       },
       {
         name: "Balkan Rundtour",
@@ -254,7 +270,8 @@
         besonderheiten: "Keine",
         region: "Europa",
         schwierigkeit: "Mittel",
-        strassenbelag: "Gemischt"
+        strassenbelag: "Gemischt",
+        cityId: "785842",
       },
       {
         name: "Marokko Rundtour",
@@ -272,7 +289,8 @@
         besonderheiten: "Eventuell Passsperren wegen Schnee",
         region: "Marokko",
         schwierigkeit: "Leicht",
-        strassenbelag: "Gemischt"
+        strassenbelag: "Gemischt",
+        cityId: "2542227",
       },
       {
         name: "TET Schweden",
@@ -289,7 +307,8 @@
         besonderheiten: "Keine",
         region: "Schweden",
         schwierigkeit: "Leicht",
-        strassenbelag: "Gemischt"
+        strassenbelag: "Gemischt",
+        cityId: "2711537",
       },
       {
         name: "Pyrenäen",
@@ -304,5 +323,6 @@
         besonderheiten: "Tagesticket für Pic Negre erforderlich (erhältlich am Grenzposten)",
         region: "Spanien",
         schwierigkeit: "Mittel",
-        strassenbelag: "Gemischt"
+        strassenbelag: "Gemischt",
+        cityId: "3130067",
       }];
