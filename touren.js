@@ -311,6 +311,22 @@
         cityId: "2711537",
       },
       {
+        name: "Peer-Gynt-Vegen",
+        gpx: "gpx/NO-Peer-Gynt-Vegen.gpx",
+        bild: [
+          "images/NO-Peer-Gynt-Vegen_01.jpeg",
+          "images/NO-Peer-Gynt-Vegen_02.jpeg",
+          "images/NO-Peer-Gynt-Vegen.jpeg",
+        ],
+        beschreibung: "Hochgebirgsstrasse durch das Espadalen.",
+        distanz: "55 km",
+        besonderheiten: "Mautpflichtig (NOK 100 pro Tag)",
+        region: "Norwegen",
+        schwierigkeit: "Leicht",
+        strassenbelag: "Off-road",
+        cityId: "3147474",
+      },
+      {
         name: "Pyrenäen",
         gpx: "gpx/ES-Pyrenees.gpx",
         bild: [
