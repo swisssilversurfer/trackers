@@ -294,6 +294,18 @@
       text-overflow: ellipsis;
     }
 
+    /* Wider first column */
+    .tour-table th:first-child,
+    .tour-table td:first-child {
+        width: 35%;  /* make first column wider */
+    }
+
+    /* Spread the remaining columns evenly */
+    .tour-table th:not(:first-child),
+    .tour-table td:not(:first-child) {
+        width: auto;  /* remaining space is divided evenly */
+    }
+
     .tour-table th {
       background-color: #f0f0f0;
       font-weight: bold;
@@ -445,6 +457,14 @@
         max-height: 500px;
         overflow: hidden;
       }
+
+      .tour-table th,
+      .tour-table td {
+        padding: 0.25rem 0.5rem;
+        font-size: 0.75rem;
+        text-overflow: ellipsis;
+      }
+
     }
   </style>
 </head>
