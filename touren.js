@@ -316,7 +316,7 @@
         bild: [
           "images/NO-Peer-Gynt-Vegen_01.jpeg",
           "images/NO-Peer-Gynt-Vegen_02.jpeg",
-          "images/NO-Peer-Gynt-Vegen.jpeg",
+          "images/NO-Peer-Gynt-Vegen_03.jpeg",
         ],
         beschreibung: "Hochgebirgsstrasse durch das Espadalen.",
         distanz: "55 km",
