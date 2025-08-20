@@ -161,13 +161,39 @@
       height: calc(100vh - 70px);
     }
 
+    #map-spinner {
+      display: none;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 1000;
+      border: 6px solid #f3f3f3;
+      border-top: 6px solid #3498db;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      animation: spin 1s linear infinite;
+    }
+
     @keyframes spin {
-  0% { transform: translate(-50%, -50%) rotate(0deg); }
-  100% { transform: translate(-50%, -50%) rotate(360deg); }
-}
+      0% { transform: translate(-50%, -50%) rotate(0deg); }
+      100% { transform: translate(-50%, -50%) rotate(360deg); }
+    }
 
-
-
+    #altitude-overlay {
+      position: absolute;
+      bottom: 10px;
+      left: 10px;
+      right: 10px;
+      height: 200px;
+      background: rgba(255, 255, 255, 0.9);
+      border: 1px solid #ccc; /* thinner, light grey */
+      border-radius: 8px;
+      box-shadow: 0px 3px 8px rgba(0,0,0,0.15);
+      padding: 10px 20px;
+      z-index: 9999;
+    }
 
     #gallery {
       display: none;
@@ -469,6 +495,13 @@
         /* Increase available height */
       }
 
+      #altitude-overlay {
+        bottom: 10px;
+        left: 5px;
+        right: 5px;
+        height: 160px;
+      }
+
       /* Make gallery scrollable nicely on small */
       #gallery {
         padding: 10px 10px 10px 10px;
@@ -545,20 +578,10 @@
 
   <div id="body-section">
     <div id="map">
-      <div id="map-spinner" style="
-       display: none;
-       position: absolute;
-       top: 50%;
-       left: 50%;
-       transform: translate(-50%, -50%);
-       z-index: 1000;
-       border: 6px solid #f3f3f3;
-       border-top: 6px solid #3498db;
-       border-radius: 50%;
-       width: 40px;
-       height: 40px;
-       animation: spin 1s linear infinite;
-  "></div>
+      <div id="map-spinner"></div>
+      <div id="altitude-overlay">
+        <canvas id="altitudeChart" style="width: 100%; height: 100%"></canvas>
+      </div>
     </div>
     <div id="gallery"></div>
   </div>
@@ -566,6 +589,8 @@
   <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet-gpx/1.5.0/gpx.min.js"></script>
   <script src="/touren.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
     <script>
 
     let mapInitialized = false;
@@ -701,12 +726,119 @@
         }
       }).on('loaded', function (e) {
         map.fitBounds(e.target.getBounds());
+      
+        // Render altitude profile
+        document.getElementById("altitude-overlay").style.display = "block"; // show
+        renderAltitudeProfile(gpxFile);
+
+
       }).addTo(map);
     }
+
+
+    // Function to render the altitude profile
+
+
+function renderAltitudeProfile(fixedGpxFile) {
+  fetch(fixedGpxFile)
+    .then(response => response.text())
+    .then(gpxText => {
+      const parser = new DOMParser();
+      const xml = parser.parseFromString(gpxText, "application/xml");
+      const trkpts = xml.getElementsByTagName("trkpt");
+
+      let dataPoints = [];
+      let totalDist = 0;
+      let lastLat = null, lastLon = null;
+
+      function haversine(lat1, lon1, lat2, lon2) {
+        const R = 6371e3; 
+        const toRad = deg => deg * Math.PI / 180;
+        const dLat = toRad(lat2 - lat1);
+        const dLon = toRad(lon2 - lon1);
+        const a = Math.sin(dLat/2)**2 +
+                  Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) *
+                  Math.sin(dLon/2)**2;
+        return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+      }
+
+      for (let i = 0; i < trkpts.length; i++) {
+        let lat = parseFloat(trkpts[i].getAttribute("lat"));
+        let lon = parseFloat(trkpts[i].getAttribute("lon"));
+        let eleTag = trkpts[i].getElementsByTagName("ele")[0];
+        if (!eleTag) continue;
+        let ele = parseFloat(eleTag.textContent);
+
+        if (lastLat !== null && lastLon !== null) {
+          totalDist += haversine(lastLat, lastLon, lat, lon);
+        }
+        dataPoints.push({ x: totalDist / 1000, y: ele });
+
+        lastLat = lat;
+        lastLon = lon;
+      }
+
+      const maxDist = dataPoints[dataPoints.length - 1].x;  // e.g., 53 km
+      let rawStep = maxDist <= 20 ? 1 : maxDist <= 100 ? 5 : maxDist <= 200 ? 10 : 20;
+      let step = Math.max(5, Math.ceil(rawStep / 5) * 5);
+
+      // Build an array of ticks to guarantee multiples of step appear
+      const ticksArray = [];
+      for (let v = 0; v <= maxDist; v += step) {
+        ticksArray.push(v);
+      }
+      const lastTick = Math.floor(maxDist / step) * step;
+      if (!ticksArray.includes(lastTick)) ticksArray.push(lastTick);
+
+      const ctx = document.getElementById('altitudeChart').getContext('2d');
+
+      // Destroy previous chart
+      if (window.altitudeChartInstance) window.altitudeChartInstance.destroy();
+
+      window.altitudeChartInstance = new Chart(ctx, {
+        type: 'line',
+        data: {
+          datasets: [{
+            label: 'Altitude (m)',
+            data: dataPoints,
+            borderColor: 'rgba(0, 120, 200, 1)',
+            backgroundColor: 'rgba(135, 206, 250, 0.5)',
+            fill: true,
+            tension: 0.1,
+            pointRadius: 0
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { display: false } },
+          scales: {
+            x: {
+              type: 'linear',
+              title: { display: true, text: "Distanz (km)" },
+              min: 0,
+              max: maxDist,
+              grid: { display: false },
+              ticks: {
+                callback: function(value) {
+                  // show only ticks from ticksArray, hide last decimal tick
+                  return ticksArray.includes(value) ? value : null;
+                }
+              }
+            },
+            y: { title: { display: true, text: "Höhe (m)" } }
+          }
+        }
+      });
+    });
+}
+
 
     // Function to render all tours on map (depending on filters)
     function renderMapFilteredTours() {
 
+      document.getElementById("altitude-overlay").style.display = "none"; // hide
+      
       initializeMap();
       currentViewMode = "map"
 
