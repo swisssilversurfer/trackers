@@ -161,6 +161,14 @@
       height: calc(100vh - 70px);
     }
 
+    @keyframes spin {
+  0% { transform: translate(-50%, -50%) rotate(0deg); }
+  100% { transform: translate(-50%, -50%) rotate(360deg); }
+}
+
+
+
+
     #gallery {
       display: none;
       flex-wrap: wrap;
@@ -536,7 +544,22 @@
   </div>
 
   <div id="body-section">
-    <div id="map"></div>
+    <div id="map">
+      <div id="map-spinner" style="
+       display: none;
+       position: absolute;
+       top: 50%;
+       left: 50%;
+       transform: translate(-50%, -50%);
+       z-index: 1000;
+       border: 6px solid #f3f3f3;
+       border-top: 6px solid #3498db;
+       border-radius: 50%;
+       width: 40px;
+       height: 40px;
+       animation: spin 1s linear infinite;
+  "></div>
+    </div>
     <div id="gallery"></div>
   </div>
 
@@ -699,6 +722,10 @@
       const groupBounds = L.latLngBounds();
       let loadedCount = 0;
 
+       // Show spinner
+        const spinner = document.getElementById("map-spinner");
+        spinner.style.display = "block";
+        
       const startIcon = L.icon({
         iconUrl: 'https://unpkg.com/leaflet-gpx@1.5.0/pin-icon-start.png',
         iconSize: [16, 24],
@@ -725,6 +752,7 @@
           loadedCount++;
           if (loadedCount === filtered.length) {
             map.fitBounds(groupBounds);
+            spinner.style.display = "none"; // hide spinner when all GPX files loaded
           }
         })
           .on('addline', e => {
@@ -807,64 +835,92 @@
 
     // Function to render tours in grid view
 
-    function renderGridView(filtered) {
-      lastGalleryViewMode = "grid";
-      showGalleryListViewBtn.style.display = "block";
-      showGalleryGridViewBtn.style.display = "none";
-      showGalleryGridViewMeteoBtn.style.display = "block";
-      backBtn.style.display = "none";
+function renderGridView(filtered) {
+  lastGalleryViewMode = "grid";
+  showGalleryListViewBtn.style.display = "block";
+  showGalleryGridViewBtn.style.display = "none";
+  showGalleryGridViewMeteoBtn.style.display = "block";
+  backBtn.style.display = "none";
 
-      filtered.forEach((t, index) => {
-        const galleryItem = document.createElement("div");
-        galleryItem.className = "gallery-item";
-        galleryItem.dataset.trackName = t.name;
+  // Clear gallery
+  gallery.innerHTML = "";
 
-        // Build carousel HTML with your exact image paths
-        const images = t.bild.map((filename, i) =>
-          `<img src="${filename}" 
-                alt="${t.name}" 
-                class="carousel-image" 
-                style="max-width: 100%; border-radius: 5px; display: ${i === 0 ? 'block' : 'none'};">`
-        ).join("");
+  // Group tours by region
+  const grouped = {};
+  filtered.forEach(t => {
+    if (!grouped[t.region]) grouped[t.region] = [];
+    grouped[t.region].push(t);
+  });
 
-        galleryItem.innerHTML = `
-          <div class="carousel" data-tour="${index}">
-            <button class="carousel-arrow left">&#10094;</button>
-            <div class="carousel-images">
-              ${images}
-            </div>
-            <button class="carousel-arrow right">&#10095;</button>
+  // Render each region section, sorted by number of tours
+  Object.keys(grouped)
+    .sort((a, b) => grouped[b].length - grouped[a].length) // most tours first
+    // .sort((a, b) => grouped[a].length - grouped[b].length) // uncomment for fewest tours first
+    .forEach(region => {
+      // Sort tours alphabetically within each region
+      grouped[region].sort((a, b) => a.name.localeCompare(b.name));
+
+    // Region header
+    const header = document.createElement("div");
+    header.className = "country-header";
+    header.innerHTML = `
+      <img src="${flags[region] || ''}" alt="${region}" class="flag" style="height: 20px; vertical-align: middle; margin-right: 0.5rem;" />
+      <span class="country-name" style="font-size: 1.2rem; font-weight: bold;">${region}</span>
+    `;
+    gallery.appendChild(header);
+
+    // Render all tours for this region
+    grouped[region].forEach((t, index) => {
+      const galleryItem = document.createElement("div");
+      galleryItem.className = "gallery-item";
+      galleryItem.dataset.trackName = t.name;
+
+      // Build carousel HTML
+      const images = t.bild.map((filename, i) =>
+        `<img src="${filename}" 
+              alt="${t.name}" 
+              class="carousel-image" 
+              style="max-width: 100%; border-radius: 5px; display: ${i === 0 ? 'block' : 'none'};">`
+      ).join("");
+
+      galleryItem.innerHTML = `
+        <div class="carousel" data-tour="${index}">
+          <button class="carousel-arrow left">&#10094;</button>
+          <div class="carousel-images">
+            ${images}
           </div>
-          <div class="tour-title" style="font-weight: bold; margin-top: 0.5rem;">
-            <img src="${flags[t.region] || ''}" alt="${t.region}" class="flag" style="height: 16px; vertical-align: middle; margin-right: 0.5rem;" />
-            ${t.name}
-          </div>
-          <div class="tour-desc">${t.beschreibung}</div>
-          <div class="tour-info">Strecke: ${t.distanz}</div>
-          <div class="tour-besonderheiten">Besonderheiten: ${t.besonderheiten}</div>
-          <div class="tour-strassenbelag">Strassenbelag: ${t.strassenbelag}</div>
-          <a class="tour-download" href="${t.gpx}" download style="display: inline-block; margin-top: 0.5rem;">➤ GPX herunterladen</a>
-        `;
+          <button class="carousel-arrow right">&#10095;</button>
+        </div>
+        <div class="tour-title" style="font-weight: bold; margin-top: 0.5rem;">
+          <img src="${flags[t.region] || ''}" alt="${t.region}" class="flag" style="height: 16px; vertical-align: middle; margin-right: 0.5rem;" />
+          ${t.name}
+        </div>
+        <div class="tour-desc">${t.beschreibung}</div>
+        <div class="tour-info">Strecke: ${t.distanz}</div>
+        <div class="tour-besonderheiten">Besonderheiten: ${t.besonderheiten}</div>
+        <div class="tour-strassenbelag">Strassenbelag: ${t.strassenbelag}</div>
+        <a class="tour-download" href="${t.gpx}" download style="display: inline-block; margin-top: 0.5rem;">➤ GPX herunterladen</a>
+      `;
 
-   // Click anywhere on tour box → open tour in map
-    galleryItem.addEventListener("click", (event) => {
-      // Exclude: Image caroussel arrows + Download-Button
-      if (
-        event.target.closest(".carousel-arrow") || 
-        event.target.closest(".tour-download")
-      ) {
-        return;
-      }
-      initializeMap();
-      renderMapSingleTour(t.gpx);
-    });
-
-        gallery.appendChild(galleryItem);
+      // Click anywhere on tour box → open tour in map
+      galleryItem.addEventListener("click", (event) => {
+        if (
+          event.target.closest(".carousel-arrow") || 
+          event.target.closest(".tour-download")
+        ) {
+          return;
+        }
+        initializeMap();
+        renderMapSingleTour(t.gpx);
       });
 
-      // Enable carousel navigation after items are added
-      setupCarousels();
-    }
+      gallery.appendChild(galleryItem);
+    });
+  });
+
+  // Enable carousel navigation after items are added
+  setupCarousels();
+}
 
     // Function to setup carousels for grid view
 
@@ -900,10 +956,34 @@
       showGalleryGridViewMeteoBtn.style.display = "none";
       backBtn.style.display = "flex";
 
-      filtered.forEach((t, index) => {
-        const galleryItem = document.createElement("div");
-        galleryItem.className = "gallery-item";
-        galleryItem.dataset.trackName = t.name;
+    // 1. Group tours by region
+    const grouped = {};
+    filtered.forEach(t => {
+      if (!grouped[t.region]) grouped[t.region] = [];
+      grouped[t.region].push(t);
+    });
+
+    // 2. Sort regions by number of tours, then loop
+    Object.keys(grouped)
+      .sort((a, b) => grouped[b].length - grouped[a].length) // most tours first
+      .forEach(region => {
+        // Sort tours alphabetically inside region
+        grouped[region].sort((a, b) => a.name.localeCompare(b.name));
+
+        // 3. Create region header
+        const header = document.createElement("div");
+        header.className = "country-header";
+        header.innerHTML = `
+          <img src="${flags[region] || ''}" alt="${region}" class="flag" style="height: 20px; vertical-align: middle; margin-right: 0.5rem;" />
+          <span class="country-name" style="font-size: 1.2rem; font-weight: bold;">${region}</span>
+        `;
+        gallery.appendChild(header);
+
+        // 4. Render tours for this region
+        grouped[region].forEach((t, index) => {
+          const galleryItem = document.createElement("div");
+          galleryItem.className = "gallery-item";
+          galleryItem.dataset.trackName = t.name;
 
         galleryItem.innerHTML = `
 
@@ -930,7 +1010,7 @@
 
         gallery.appendChild(galleryItem);
       });
-
+    });
     }
 
     // Function to render tours in list view
