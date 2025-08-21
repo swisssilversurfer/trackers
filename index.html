@@ -158,7 +158,7 @@
 
     #map {
       display: flex;
-      height: calc(100vh - 70px);
+      height: calc(100vh - 64px);
     }
 
     #map-spinner {
@@ -492,7 +492,6 @@
       #map,
       #gallery {
         height: calc(100vh - (64px));
-        /* Increase available height */
       }
 
       #altitude-overlay {
@@ -685,6 +684,10 @@
     // Function to render a single tour in the map
     function renderMapSingleTour(gpxFile, tourPois) {
     
+      filterDropdown.style.display = "none";
+      showGalleryBtn.style.display = "none";
+      backBtn.style.display = "block";
+
       currentViewMode = "map"
 
       const tour = touren.find(t => t.gpx === gpxFile);
@@ -731,107 +734,103 @@
         document.getElementById("altitude-overlay").style.display = "block"; // show
         renderAltitudeProfile(gpxFile);
 
-
       }).addTo(map);
     }
 
-
     // Function to render the altitude profile
+    function renderAltitudeProfile(fixedGpxFile) {
+      fetch(fixedGpxFile)
+        .then(response => response.text())
+        .then(gpxText => {
+          const parser = new DOMParser();
+          const xml = parser.parseFromString(gpxText, "application/xml");
+          const trkpts = xml.getElementsByTagName("trkpt");
 
+          let dataPoints = [];
+          let totalDist = 0;
+          let lastLat = null, lastLon = null;
 
-function renderAltitudeProfile(fixedGpxFile) {
-  fetch(fixedGpxFile)
-    .then(response => response.text())
-    .then(gpxText => {
-      const parser = new DOMParser();
-      const xml = parser.parseFromString(gpxText, "application/xml");
-      const trkpts = xml.getElementsByTagName("trkpt");
-
-      let dataPoints = [];
-      let totalDist = 0;
-      let lastLat = null, lastLon = null;
-
-      function haversine(lat1, lon1, lat2, lon2) {
-        const R = 6371e3; 
-        const toRad = deg => deg * Math.PI / 180;
-        const dLat = toRad(lat2 - lat1);
-        const dLon = toRad(lon2 - lon1);
-        const a = Math.sin(dLat/2)**2 +
-                  Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) *
-                  Math.sin(dLon/2)**2;
-        return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-      }
-
-      for (let i = 0; i < trkpts.length; i++) {
-        let lat = parseFloat(trkpts[i].getAttribute("lat"));
-        let lon = parseFloat(trkpts[i].getAttribute("lon"));
-        let eleTag = trkpts[i].getElementsByTagName("ele")[0];
-        if (!eleTag) continue;
-        let ele = parseFloat(eleTag.textContent);
-
-        if (lastLat !== null && lastLon !== null) {
-          totalDist += haversine(lastLat, lastLon, lat, lon);
-        }
-        dataPoints.push({ x: totalDist / 1000, y: ele });
-
-        lastLat = lat;
-        lastLon = lon;
-      }
-
-      const maxDist = dataPoints[dataPoints.length - 1].x;  // e.g., 53 km
-      let rawStep = maxDist <= 20 ? 1 : maxDist <= 100 ? 5 : maxDist <= 200 ? 10 : 20;
-      let step = Math.max(5, Math.ceil(rawStep / 5) * 5);
-
-      // Build an array of ticks to guarantee multiples of step appear
-      const ticksArray = [];
-      for (let v = 0; v <= maxDist; v += step) {
-        ticksArray.push(v);
-      }
-      const lastTick = Math.floor(maxDist / step) * step;
-      if (!ticksArray.includes(lastTick)) ticksArray.push(lastTick);
-
-      const ctx = document.getElementById('altitudeChart').getContext('2d');
-
-      // Destroy previous chart
-      if (window.altitudeChartInstance) window.altitudeChartInstance.destroy();
-
-      window.altitudeChartInstance = new Chart(ctx, {
-        type: 'line',
-        data: {
-          datasets: [{
-            label: 'Altitude (m)',
-            data: dataPoints,
-            borderColor: 'rgba(0, 120, 200, 1)',
-            backgroundColor: 'rgba(135, 206, 250, 0.5)',
-            fill: true,
-            tension: 0.1,
-            pointRadius: 0
-          }]
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          plugins: { legend: { display: false } },
-          scales: {
-            x: {
-              type: 'linear',
-              title: { display: true, text: "Distanz (km)" },
-              min: 0,
-              max: maxDist,
-              grid: { display: false },
-              ticks: {
-                callback: function(value) {
-                  // show only ticks from ticksArray, hide last decimal tick
-                  return ticksArray.includes(value) ? value : null;
-                }
-              }
-            },
-            y: { title: { display: true, text: "Höhe (m)" } }
+          function haversine(lat1, lon1, lat2, lon2) {
+            const R = 6371e3; 
+            const toRad = deg => deg * Math.PI / 180;
+            const dLat = toRad(lat2 - lat1);
+            const dLon = toRad(lon2 - lon1);
+            const a = Math.sin(dLat/2)**2 +
+                      Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) *
+                      Math.sin(dLon/2)**2;
+            return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
           }
-        }
-      });
-    });
-}
+
+          for (let i = 0; i < trkpts.length; i++) {
+            let lat = parseFloat(trkpts[i].getAttribute("lat"));
+            let lon = parseFloat(trkpts[i].getAttribute("lon"));
+            let eleTag = trkpts[i].getElementsByTagName("ele")[0];
+            if (!eleTag) continue;
+            let ele = parseFloat(eleTag.textContent);
+
+            if (lastLat !== null && lastLon !== null) {
+              totalDist += haversine(lastLat, lastLon, lat, lon);
+            }
+            dataPoints.push({ x: totalDist / 1000, y: ele });
+
+            lastLat = lat;
+            lastLon = lon;
+          }
+
+          const maxDist = dataPoints[dataPoints.length - 1].x;  // e.g., 53 km
+          let rawStep = maxDist <= 20 ? 1 : maxDist <= 100 ? 5 : maxDist <= 200 ? 10 : 20;
+          let step = Math.max(5, Math.ceil(rawStep / 5) * 5);
+
+          // Build an array of ticks to guarantee multiples of step appear
+          const ticksArray = [];
+          for (let v = 0; v <= maxDist; v += step) {
+            ticksArray.push(v);
+          }
+          const lastTick = Math.floor(maxDist / step) * step;
+          if (!ticksArray.includes(lastTick)) ticksArray.push(lastTick);
+
+          const ctx = document.getElementById('altitudeChart').getContext('2d');
+
+          // Destroy previous chart
+          if (window.altitudeChartInstance) window.altitudeChartInstance.destroy();
+
+          window.altitudeChartInstance = new Chart(ctx, {
+            type: 'line',
+            data: {
+              datasets: [{
+                label: 'Altitude (m)',
+                data: dataPoints,
+                borderColor: 'rgba(0, 120, 200, 1)',
+                backgroundColor: 'rgba(135, 206, 250, 0.5)',
+                fill: true,
+                tension: 0.1,
+                pointRadius: 0
+              }]
+            },
+            options: {
+              responsive: true,
+              maintainAspectRatio: false,
+              plugins: { legend: { display: false } },
+              scales: {
+                x: {
+                  type: 'linear',
+                  title: { display: true, text: "Distanz (km)" },
+                  min: 0,
+                  max: maxDist,
+                  grid: { display: false },
+                  ticks: {
+                    callback: function(value) {
+                      // show only ticks from ticksArray, hide last decimal tick
+                      return ticksArray.includes(value) ? value : null;
+                    }
+                  }
+                },
+                y: { title: { display: true, text: "Höhe (m)" } }
+              }
+            }
+          });
+        });
+    }
 
 
     // Function to render all tours on map (depending on filters)
@@ -1329,10 +1328,10 @@ function renderGridView(filtered) {
       const hint = document.createElement('div');
       hint.textContent = '💡 Klicke auf eine Tour, um sie auf der Karte zu sehen.';
       hint.style.position = 'fixed';
-      hint.style.top = '70px'; // adjust depending on your header height
+      hint.style.top = '75px'; // adjust depending on your header height
       hint.style.left = '50%';
       hint.style.transform = 'translateX(-50%)';
-      hint.style.background = 'rgba(0,0,0,0.85)';
+      hint.style.background = 'rgba(0,0,0,0.65)';
       hint.style.color = '#fff';
       hint.style.padding = '8px 14px';
       hint.style.borderRadius = '5px';
@@ -1353,7 +1352,7 @@ function renderGridView(filtered) {
         hint.style.opacity = '0';
         setTimeout(() => hint.remove(), 500);
       }, 3000);
-
+      
       localStorage.setItem('tourClickHintShown', 'true');
     }
 
