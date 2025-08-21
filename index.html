@@ -734,8 +734,6 @@
       }).addTo(map);
     }
 
-
-
     // Global marker for chart-map sync
     let chartCursorMarker = null;
 
@@ -802,6 +800,11 @@
 
           // Destroy previous chart
           if (window.altitudeChartInstance) window.altitudeChartInstance.destroy();
+
+          // Prevent map move when interacting with chart on touch devices
+          const altitudeDiv = document.getElementById("altitude-overlay");
+          L.DomEvent.disableClickPropagation(altitudeDiv);
+          L.DomEvent.disableScrollPropagation(altitudeDiv);
 
           // Vertical line plugin for Chart.js
           const verticalLinePlugin = {
