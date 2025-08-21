@@ -722,8 +722,18 @@
           shadowUrl: 'https://unpkg.com/leaflet-gpx@1.5.0/pin-shadow.png'
         }
       }).on('loaded', function (e) {
-        map.fitBounds(e.target.getBounds());
-      
+        // Get the overlay element
+        const overlay = document.getElementById('altitude-overlay');
+
+        // Compute its height in pixels
+        const overlayHeight = overlay.offsetHeight;
+
+        // Fit GPX bounds with bottom padding equal to overlay height + a small margin
+        map.fitBounds(e.target.getBounds(), {
+          paddingBottomRight: [0, overlayHeight + 10], // 10px extra margin
+          paddingTopLeft: [10, 10] // optional small margin at top/left
+        });
+
         // Render altitude profile
         document.getElementById("altitude-overlay").style.display = "block"; // show
         renderAltitudeProfile(gpxFile);
@@ -734,24 +744,20 @@
     // Global marker for chart-map sync
     let chartCursorMarker = null;
 
+    function adjustOverlayForIOS() {
+      const overlay = document.getElementById('altitude-overlay');
+      if (!overlay) return;
 
-function adjustOverlayForIOS() {
-  const overlay = document.getElementById('altitude-overlay');
-  if (!overlay) return;
+      const vh = window.innerHeight * 0.01;
+      const bottomOffset = 10; // base offset in px
 
-  const vh = window.innerHeight * 0.01;
-  const bottomOffset = 10; // base offset in px
+      overlay.style.height = `${vh * 25}px`; // ~25% of visible height
+      overlay.style.bottom = `${bottomOffset}px`; 
+    }
 
-  overlay.style.height = `${vh * 25}px`; // ~25% of visible height
-  overlay.style.bottom = `${bottomOffset}px`; 
-}
-
-window.addEventListener('resize', adjustOverlayForIOS);
-window.addEventListener('orientationchange', adjustOverlayForIOS);
-adjustOverlayForIOS();
-
-
-
+    window.addEventListener('resize', adjustOverlayForIOS);
+    window.addEventListener('orientationchange', adjustOverlayForIOS);
+    adjustOverlayForIOS();
 
     // Function to render the altitude profile
     function renderAltitudeProfile(fixedGpxFile) {
