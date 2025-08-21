@@ -495,17 +495,22 @@
       }
 
 #altitude-overlay {
-  position: absolute;
+  position: fixed; /* fixed so it stays above the map and viewport */
   left: 5px;
   right: 5px;
+  bottom: 10px; /* initial offset from bottom */
 
-  /* instead of bottom: 0, we anchor relative to visible height */
-  bottom: calc(var(--vh, 1vh) * 2); /* 2% above bottom of visible viewport */
-
-  height: calc(var(--vh, 1vh) * 25); /* 25% of visible height */
+  height: 25dvh; /* fallback modern dynamic viewport */
   max-height: 200px;
   min-height: 120px;
+
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+  padding: 5px;
+  z-index: 1000;
 }
+
 
 
       /* Make gallery scrollable nicely on small */
@@ -745,12 +750,21 @@
     let chartCursorMarker = null;
 
 
-    function setVH() {
-      const vh = window.innerHeight * 0.01;
-      document.documentElement.style.setProperty('--vh', `${vh}px`);
-    }
-    window.addEventListener('resize', setVH);
-    setVH();
+function adjustOverlayForIOS() {
+  const overlay = document.getElementById('altitude-overlay');
+  if (!overlay) return;
+
+  const vh = window.innerHeight * 0.01;
+  const bottomOffset = 10; // base offset in px
+
+  overlay.style.height = `${vh * 25}px`; // ~25% of visible height
+  overlay.style.bottom = `${bottomOffset}px`; 
+}
+
+window.addEventListener('resize', adjustOverlayForIOS);
+window.addEventListener('orientationchange', adjustOverlayForIOS);
+adjustOverlayForIOS();
+
 
 
 
