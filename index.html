@@ -191,7 +191,7 @@
       border: 1px solid #ccc; /* thinner, light grey */
       border-radius: 8px;
       box-shadow: 0px 3px 8px rgba(0,0,0,0.15);
-      padding: 10px 20px;
+      padding: 10px 10px;
       z-index: 9999;
     }
 
@@ -653,13 +653,10 @@
         map = L.map('map')
         const baseLayers = {
           "Standard": L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            attribution: '© OpenStreetMap-Mitwirkende'
           }),
           "Topo": L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
-            attribution: '© OpenTopoMap'
           }),
-          "Satellit": L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
-            attribution: 'Tiles © Esri'
+          "Satellit": L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', { 
           })
         };
 
@@ -737,6 +734,11 @@
       }).addTo(map);
     }
 
+
+
+    // Global marker for chart-map sync
+    let chartCursorMarker = null;
+
     // Function to render the altitude profile
     function renderAltitudeProfile(fixedGpxFile) {
       fetch(fixedGpxFile)
@@ -749,6 +751,9 @@
           let dataPoints = [];
           let totalDist = 0;
           let lastLat = null, lastLon = null;
+
+          // Store also lat/lon for later lookup
+          let geoPoints = [];
 
           function haversine(lat1, lon1, lat2, lon2) {
             const R = 6371e3; 
@@ -771,7 +776,11 @@
             if (lastLat !== null && lastLon !== null) {
               totalDist += haversine(lastLat, lastLon, lat, lon);
             }
-            dataPoints.push({ x: totalDist / 1000, y: ele });
+            
+            let distKm = totalDist / 1000;
+
+            dataPoints.push({ x: distKm, y: ele });
+            geoPoints.push({ x: distKm, lat: lat, lon: lon });
 
             lastLat = lat;
             lastLon = lon;
@@ -794,6 +803,29 @@
           // Destroy previous chart
           if (window.altitudeChartInstance) window.altitudeChartInstance.destroy();
 
+          // Vertical line plugin for Chart.js
+          const verticalLinePlugin = {
+            id: 'verticalLine',
+            afterDraw: (chart) => {
+              if (chart.tooltip?._active?.length) {
+                let ctx = chart.ctx;
+                let x = chart.tooltip._active[0].element.x;
+                let topY = chart.scales.y.top;
+                let bottomY = chart.scales.y.bottom;
+
+                ctx.save();
+                ctx.beginPath();
+                ctx.moveTo(x, topY);
+                ctx.lineTo(x, bottomY);
+                ctx.lineWidth = 1.5;
+                ctx.strokeStyle = 'red';
+                ctx.stroke();
+                ctx.restore();
+              }
+            }
+          };
+
+          // Create the chart
           window.altitudeChartInstance = new Chart(ctx, {
             type: 'line',
             data: {
@@ -807,31 +839,67 @@
                 pointRadius: 0
               }]
             },
-            options: {
-              responsive: true,
-              maintainAspectRatio: false,
-              plugins: { legend: { display: false } },
-              scales: {
-                x: {
-                  type: 'linear',
-                  title: { display: true, text: "Distanz (km)" },
-                  min: 0,
-                  max: maxDist,
-                  grid: { display: false },
-                  ticks: {
-                    callback: function(value) {
-                      // show only ticks from ticksArray, hide last decimal tick
-                      return ticksArray.includes(value) ? value : null;
+          options: {
+            events: ['mousemove', 'mouseout', 'click', 'touchstart', 'touchmove'],
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { 
+              legend: { display: false },
+              tooltip: {
+                mode: 'index',
+                intersect: false,
+                enabled: true,
+                callbacks: {
+                  label: function(context) {
+                    const distKm = context.parsed.x;
+                    const match = geoPoints.find(p => Math.abs(p.x - distKm) < 0.05);
+                    if (match) {
+                      updateMapMarker(match.lat, match.lon);
                     }
+                    return `${Math.round(context.parsed.y)} m`;
                   }
-                },
-                y: { title: { display: true, text: "Höhe (m)" } }
+                }
               }
+            },
+            interaction: {
+              mode: 'nearest',
+              axis: 'x',
+              intersect: false
+            },
+            scales: {
+              x: {
+                type: 'linear',
+                title: { display: true, text: "Distanz (km)" },
+                min: 0,
+                max: maxDist,
+                grid: { display: false },
+                ticks: {
+                  callback: function(value) {
+                    return ticksArray.includes(value) ? value : null;
+                  }
+                }
+              },
+              y: { title: { display: true, text: "Höhe (m)" } }
             }
-          });
+          },
+          plugins: [verticalLinePlugin]
         });
-    }
 
+        // Function to update marker on map
+        function updateMapMarker(lat, lon) {
+          if (!chartCursorMarker) {
+            chartCursorMarker = L.circleMarker([lat, lon], {
+              radius: 6,
+              color: "red",
+              fillColor: "red",
+              fillOpacity: 0.9
+            }).addTo(map);
+          } else {
+            chartCursorMarker.setLatLng([lat, lon]);
+          }
+        }
+      });
+    }
 
     // Function to render all tours on map (depending on filters)
     function renderMapFilteredTours() {
@@ -896,7 +964,6 @@
           <img src="${tour.bild[0]}" alt="${tour.name}" style="width: 90px; height: auto; border-radius: 3px; box-shadow: 0 0 3px rgba(0,0,0,0.25);">
         </div>
       `;
-
             polyline.bindTooltip(tooltipContent, {
               permanent: true,
               direction: 'top',
@@ -925,7 +992,6 @@
       } else {
         document.querySelector(".leaflet-tour-title").textContent = "Gefilterte Touren";
       }
-    
     }
 
     /* =======================
@@ -933,7 +999,6 @@
      ======================= */
 
     // Function to initialize gallery view
-
     function showGallery(selectedTour = null, viewMode = "grid") {
       
       document.getElementById("map").style.display = "none";
@@ -965,96 +1030,94 @@
     }
 
     // Function to render tours in grid view
+    function renderGridView(filtered) {
+      lastGalleryViewMode = "grid";
+      showGalleryListViewBtn.style.display = "block";
+      showGalleryGridViewBtn.style.display = "none";
+      showGalleryGridViewMeteoBtn.style.display = "block";
+      backBtn.style.display = "none";
 
-function renderGridView(filtered) {
-  lastGalleryViewMode = "grid";
-  showGalleryListViewBtn.style.display = "block";
-  showGalleryGridViewBtn.style.display = "none";
-  showGalleryGridViewMeteoBtn.style.display = "block";
-  backBtn.style.display = "none";
+      // Clear gallery
+      gallery.innerHTML = "";
 
-  // Clear gallery
-  gallery.innerHTML = "";
-
-  // Group tours by region
-  const grouped = {};
-  filtered.forEach(t => {
-    if (!grouped[t.region]) grouped[t.region] = [];
-    grouped[t.region].push(t);
-  });
-
-  // Render each region section, sorted by number of tours
-  Object.keys(grouped)
-    .sort((a, b) => grouped[b].length - grouped[a].length) // most tours first
-    // .sort((a, b) => grouped[a].length - grouped[b].length) // uncomment for fewest tours first
-    .forEach(region => {
-      // Sort tours alphabetically within each region
-      grouped[region].sort((a, b) => a.name.localeCompare(b.name));
-
-    // Region header
-    const header = document.createElement("div");
-    header.className = "country-header";
-    header.innerHTML = `
-      <img src="${flags[region] || ''}" alt="${region}" class="flag" style="height: 20px; vertical-align: middle; margin-right: 0.5rem;" />
-      <span class="country-name" style="font-size: 1.2rem; font-weight: bold;">${region}</span>
-    `;
-    gallery.appendChild(header);
-
-    // Render all tours for this region
-    grouped[region].forEach((t, index) => {
-      const galleryItem = document.createElement("div");
-      galleryItem.className = "gallery-item";
-      galleryItem.dataset.trackName = t.name;
-
-      // Build carousel HTML
-      const images = t.bild.map((filename, i) =>
-        `<img src="${filename}" 
-              alt="${t.name}" 
-              class="carousel-image" 
-              style="max-width: 100%; border-radius: 5px; display: ${i === 0 ? 'block' : 'none'};">`
-      ).join("");
-
-      galleryItem.innerHTML = `
-        <div class="carousel" data-tour="${index}">
-          <button class="carousel-arrow left">&#10094;</button>
-          <div class="carousel-images">
-            ${images}
-          </div>
-          <button class="carousel-arrow right">&#10095;</button>
-        </div>
-        <div class="tour-title" style="font-weight: bold; margin-top: 0.5rem;">
-          <img src="${flags[t.region] || ''}" alt="${t.region}" class="flag" style="height: 16px; vertical-align: middle; margin-right: 0.5rem;" />
-          ${t.name}
-        </div>
-        <div class="tour-desc">${t.beschreibung}</div>
-        <div class="tour-info">Strecke: ${t.distanz}</div>
-        <div class="tour-besonderheiten">Besonderheiten: ${t.besonderheiten}</div>
-        <div class="tour-strassenbelag">Strassenbelag: ${t.strassenbelag}</div>
-        <a class="tour-download" href="${t.gpx}" download style="display: inline-block; margin-top: 0.5rem;">➤ GPX herunterladen</a>
-      `;
-
-      // Click anywhere on tour box → open tour in map
-      galleryItem.addEventListener("click", (event) => {
-        if (
-          event.target.closest(".carousel-arrow") || 
-          event.target.closest(".tour-download")
-        ) {
-          return;
-        }
-        initializeMap();
-        renderMapSingleTour(t.gpx);
+      // Group tours by region
+      const grouped = {};
+      filtered.forEach(t => {
+        if (!grouped[t.region]) grouped[t.region] = [];
+        grouped[t.region].push(t);
       });
 
-      gallery.appendChild(galleryItem);
-    });
-  });
+      // Render each region section, sorted by number of tours
+      Object.keys(grouped)
+        .sort((a, b) => grouped[b].length - grouped[a].length) // most tours first
+        // .sort((a, b) => grouped[a].length - grouped[b].length) // uncomment for fewest tours first
+        .forEach(region => {
+          // Sort tours alphabetically within each region
+          grouped[region].sort((a, b) => a.name.localeCompare(b.name));
 
-  // Enable carousel navigation after items are added
-  setupCarousels();
-}
+        // Region header
+        const header = document.createElement("div");
+        header.className = "country-header";
+        header.innerHTML = `
+          <img src="${flags[region] || ''}" alt="${region}" class="flag" style="height: 20px; vertical-align: middle; margin-right: 0.5rem;" />
+          <span class="country-name" style="font-size: 1.2rem; font-weight: bold;">${region}</span>
+        `;
+        gallery.appendChild(header);
+
+        // Render all tours for this region
+        grouped[region].forEach((t, index) => {
+          const galleryItem = document.createElement("div");
+          galleryItem.className = "gallery-item";
+          galleryItem.dataset.trackName = t.name;
+
+          // Build carousel HTML
+          const images = t.bild.map((filename, i) =>
+            `<img src="${filename}" 
+                  alt="${t.name}" 
+                  class="carousel-image" 
+                  style="max-width: 100%; border-radius: 5px; display: ${i === 0 ? 'block' : 'none'};">`
+          ).join("");
+
+          galleryItem.innerHTML = `
+            <div class="carousel" data-tour="${index}">
+              <button class="carousel-arrow left">&#10094;</button>
+              <div class="carousel-images">
+                ${images}
+              </div>
+              <button class="carousel-arrow right">&#10095;</button>
+            </div>
+            <div class="tour-title" style="font-weight: bold; margin-top: 0.5rem;">
+              <img src="${flags[t.region] || ''}" alt="${t.region}" class="flag" style="height: 16px; vertical-align: middle; margin-right: 0.5rem;" />
+              ${t.name}
+            </div>
+            <div class="tour-desc">${t.beschreibung}</div>
+            <div class="tour-info">Strecke: ${t.distanz}</div>
+            <div class="tour-besonderheiten">Besonderheiten: ${t.besonderheiten}</div>
+            <div class="tour-strassenbelag">Strassenbelag: ${t.strassenbelag}</div>
+            <a class="tour-download" href="${t.gpx}" download style="display: inline-block; margin-top: 0.5rem;">➤ GPX herunterladen</a>
+          `;
+
+          // Click anywhere on tour box → open tour in map
+          galleryItem.addEventListener("click", (event) => {
+            if (
+              event.target.closest(".carousel-arrow") || 
+              event.target.closest(".tour-download")
+            ) {
+              return;
+            }
+            initializeMap();
+            renderMapSingleTour(t.gpx);
+          });
+
+          gallery.appendChild(galleryItem);
+        });
+      });
+
+      // Enable carousel navigation after items are added
+      setupCarousels();
+    }
 
     // Function to setup carousels for grid view
-
     function setupCarousels() {
       document.querySelectorAll(".carousel").forEach(carousel => {
         const images = carousel.querySelectorAll(".carousel-image");
@@ -1077,7 +1140,6 @@ function renderGridView(filtered) {
     }
 
     // Function to render tours in grid view with weather widget
-
     function renderGridViewMeteo(filtered) {
       lastGalleryViewMode = "grid";
       filterDropdown.style.display = "none";
@@ -1145,7 +1207,6 @@ function renderGridView(filtered) {
     }
 
     // Function to render tours in list view
-
     function renderListView(filtered) {
 
       lastGalleryViewMode = "list";
@@ -1188,7 +1249,6 @@ function renderGridView(filtered) {
       <tbody>
       </tbody>
     `;
-
         const tbody = table.querySelector("tbody");
 
         // Add a row for each tour
