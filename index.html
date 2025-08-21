@@ -495,10 +495,15 @@
       }
 
       #altitude-overlay {
-        bottom: 10px;
+        position: absolute;
+        bottom: env(safe-area-inset-bottom, 10px); /* iOS safe area */
         left: 5px;
         right: 5px;
-        height: 160px;
+
+        /* Use dynamic viewport units when supported */
+        height: 25dvh;   /* ~25% of the visible screen height */
+        max-height: 200px; /* prevent overlay from getting too tall */
+        min-height: 120px; /* ensure it's usable on very small screens */
       }
 
       /* Make gallery scrollable nicely on small */
