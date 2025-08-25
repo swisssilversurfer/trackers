@@ -523,12 +523,6 @@
         max-width: 70%; /* so it doesn’t collide with controls */
       }
 
-      .tour-info-row--truncate {
-        overflow: hidden;
-        white-space: nowrap;       /* keep on single line */
-        text-overflow: ellipsis;   /* show "..." when text is too long */
-      }
-
       .gallery-item {
         width: 100%;
         max-width: 400px;
@@ -840,7 +834,7 @@
             <span>Strecke: ${tour.distanz}</span>
             <span>Belag: ${tour.strassenbelag}</span>
           </div>
-          <div class="tour-info-row tour-info-row--truncate">
+          <div class="tour-info-row">
             <span>Besonderheiten: ${tour.besonderheiten}</span>
           </div>
         </div>
