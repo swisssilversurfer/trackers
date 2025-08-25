@@ -196,8 +196,8 @@
       padding: 4px 10px;
       margin-top: 10px;
       border-radius: 5px;
-      font-weight: bold;
-      font-size: 14px;
+      font-weight: normal;
+      font-size: 12px;
       box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
       text-overflow: ellipsis;
       white-space: normal;
@@ -223,7 +223,7 @@
     }
 
     .leaflet-tour-title-text strong {
-      font-size: 12px;
+      font-size: inherit;
       font-weight: bold;
     }
 
@@ -519,11 +519,13 @@
         font-size: 1rem;                      /* icon size */
       }
 
-      .leaflet-tour-title { 
-        max-width: 70%;
-        white-space: nowrap;
-        overflow: hidden;
-      }
+.leaflet-tour-title {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;  /* max number of lines */
+  overflow: hidden;
+}
+
 
       .gallery-item {
         width: 100%;
