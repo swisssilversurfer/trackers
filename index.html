@@ -484,7 +484,7 @@
 
   /* RESPONSIVE DESIGN FOR SMALL SCREENS */
 
-    @media (max-width: 768px) {
+    @media (max-width: 767px) {
 
       #title-section {
         gap: 0.2rem;                          /* space between buttons */
@@ -509,6 +509,13 @@
 
       .icon-btn i {
         font-size: 1rem;                      /* icon size */
+      }
+
+      .gallery-item {
+        width: 100%;
+        max-width: 400px;
+        max-height: 500px;
+        overflow: hidden;
       }
 
       .tour-table thead {
@@ -664,7 +671,7 @@
       // Function to initialize map view (independent of single track or all tracks view)
       function initializeMap() {
         
-        mapEl.style.display = "flex";
+        mapEl.style.display = "block";
         gallery.style.display = "none";
 
         if (!mapInitialized) {
