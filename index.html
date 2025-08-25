@@ -6,27 +6,22 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Trackers Touren & GPX-Tracks</title>
   <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">   <!-- Icon library -->
 
   <style>
+    /* CSS RESET */
     * {
       margin: 0;
       padding: 0;
       box-sizing: border-box;
     }
 
-    body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background-color: #f1f1f1;
-      color: #333;
-    }
-
     /* ELEMENTS IN TITLE SECTION */
 
     #title-section {
       background-color: #fff;
-      padding: 10px 10px; /* <-- adjust padding for better spacing */
-      padding-left: 15px;
-      padding-right: 15px;
+      color: #072b47;
+      padding: 10px 10px;
       border-bottom: 1px solid #ccc;
       display: flex;
       align-items: center;
@@ -35,10 +30,9 @@
       height: 64px;
       box-sizing: border-box;
       overflow: visible; /* allows content to overflow if needed */
-
       position: sticky;
-      top: 0;            /* <-- stick to top */
-      z-index: 1000;     /* <-- ensures it stays above other content */
+      top: 0;            /* stick to top */
+      z-index: 2000;     /* ensures it stays above other content */
     }
 
     .header-image {
@@ -47,119 +41,125 @@
       border-radius: 4px;
     }
 
-    #header h1 {
-      flex-shrink: 0;
-      font-size: 1rem;
-      color: #333;
-      margin-right: 1rem;
-    }
-
     .flex-spacer {
-      flex-grow: 1;
+      flex-grow: 1; /* pushes buttons to the right */
     }
 
-    #button-bar {
-      display: flex;           /* horizontal layout */
-      flex-wrap: wrap;         /* wrap if needed */
-      gap: 0.5rem;             /* spacing between buttons */
-      justify-content: flex-end; /* align buttons to the right */
-      align-items: center;     /* vertical alignment with header/title */
-      width: auto;             /* only as wide as needed */
-      min-height: 25px;        /* ensures consistent height */
-      overflow: visible; /* allows content to overflow if needed */
-    }
-
-    .app-button {
-      padding: 0.4rem 0.5rem;   /* controls height */
-      font-size: 0.8rem;         /* consistent font size */
-      line-height: 1.2;          /* vertically center text */
-      cursor: pointer;
-      background-color: #0066cc;
-      color: white;
-      border: none;
-      border-radius: 5px;
-      white-space: nowrap;
-      text-align: center;
-      overflow: hidden;
-      text-overflow: ellipsis;
-
-      display: flex;
-      align-items: center;
+    .icon-btn {
+      display: inline-flex;          /* center the icon */
       justify-content: center;
-    }
-
-    .filter-dropdown {
-      position: relative;
-      display: flex;              /* aligns filterToggle button with others */
-      font-size: 0.8rem;          /* unify with buttons */
-    }
-
-    .filter-menu {
-      position: absolute;
-      top: 100%;
-      right: 0;
-      background: white;
-      border: 1px solid #ccc;
-      border-radius: 5px;
-      padding: 0.5rem 1rem;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-      display: none;              /* shown via JS */
-      z-index: 2000;
-      min-width: 300px;
-      font-size: 0.8rem;          /* unify with buttons */
-    }
-
-    .filter-menu.active {
-      display: block;
-    }
-
-    /* FILTER MENU GROUPS */
-    .filter-menu .filter-group {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.5rem 1rem;
       align-items: center;
-      font-size: 0.8rem;          /* unify with buttons */
+      width: 60px;                   /* fixed width */
+      height: 40px;                  /* fixed height */
+      background: #e6f3ff;
+      border: none;                  /* remove native button border */
+      border-radius: 8px;            /* rounded corners */
+      cursor: pointer;               /* pointer on hover */
+      transition: background 0.2s;   /* smooth hover effect */
     }
 
-    .filter-menu .filter-group label {
-      font-weight: 500;
-      font-size: 0.8rem;
-      margin-right: 0.5rem;
-      white-space: nowrap;
-      line-height: 1.2; /* vertically center label */
+    .icon-btn i {
+      color: #072b47;              /* icon color */
+      font-size: 1.5rem;             /* icon size */
     }
 
-    .filter-menu .filter-group select {
+    .icon-btn:hover {
+      background: #b8dcff;         /* light blue hover background */
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    /* ELEMENTS IN FILTER PANEL */
+
+    .filter-panel { 
+      position: fixed;
+      top: 64px;                 /* below header */
+      right: 1.5rem;
+      background: #fff;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+      padding: 1rem 1.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      width: 220px;
+      z-index: 2000;
+      transform: translateY(-20px);
+      opacity: 0;
+      pointer-events: none;
+      transition: transform 0.25s ease, opacity 0.25s ease;
+    }
+
+    .filter-panel.active {
+      transform: translateY(0);
+      opacity: 1;
+      pointer-events: auto;   /* enable clicks */
+    }
+
+    .filter-panel.hidden {
+      display: none;
+    }
+
+    .filter-panel h3 {
+      margin-bottom: 0.5rem;
+      font-size: 1rem;
+      color: #072b47;
+    }
+
+    .filter-panel label {
+      display: flex;
+      flex-direction: column;
+      font-size: 0.9rem;
+      color: #333;
+    }
+
+    .filter-panel select {
+      margin-top: 0.25rem;
       padding: 0.25rem 0.5rem;
-      font-size: 0.8rem;
+      border-radius: 5px;
       border: 1px solid #ccc;
-      border-radius: 4px;
-      cursor: pointer;
-      background: white;
-      min-width: 100px;
-      margin-left: auto;
+      font-size: 0.9rem;
     }
 
-    /* FILTER RESET BUTTON */
-    #filterResetBtn {
-      margin-top: 0.5rem;
-      padding: 0.25rem 0.5rem;    /* match buttons */
-      font-size: 0.8rem;
-      line-height: 1.2;
-      border-radius: 5px;
+    .filter-buttons {
+      display: flex;
+      justify-content: flex-end;
+      gap: 0.5rem;
+      margin-top: 5px;
+    }
+
+    .filter-buttons .icon-btn {
+      width: 40px;
+      height: 40px;
+    }
+
+    .filter-buttons .icon-btn i {
+      font-size: 1rem;
     }
 
     /* ELEMENTS IN BODY SECTION */
 
-    #body-section {
-      background-color: #f4f4f4;
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f1f1f1;
+      color: #333;
     }
 
-    #map {
-      display: flex;
+    /* ELEMENTS IN MAP */
+    
+    #map { 
+      display: none;
+      width: 100%;
+      flex-wrap: wrap;
+      justify-content: center;
+      padding: 1rem;
+      gap: 0.5rem;
+      background-color: #f9f9f9;
+      overflow-y: auto;
       height: calc(100vh - 64px);
-    }
+    } 
 
     #map-spinner {
       display: none;
@@ -181,16 +181,58 @@
       100% { transform: translate(-50%, -50%) rotate(360deg); }
     }
 
+    .leaflet-tour-title {
+      position: relative;                     /* allows us to move it */
+      max-height: 66px;
+      left: 10px;                             /* distance from zoom buttons */
+      background: rgba(255, 255, 255, 0.9);
+      display: flex;             
+      align-items: stretch;                   /* image matches text height */
+      gap: 10px;                  
+      padding: 4px 10px;
+      margin-top: 10px;
+      border-radius: 5px;
+      font-weight: bold;
+      font-size: 14px;
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+    }
+
+    .leaflet-tour-title img {
+      height: auto;
+      max-height: 3.6em;                      /* roughly 3 lines of text */
+      width: auto;                
+      border-radius: 3px;
+      box-shadow: 0 0 3px rgba(0,0,0,0.25);
+      object-fit: cover;          
+      align-self: center;                     /* vertically center if smaller than text */
+    }
+
+    .leaflet-tour-title-text {
+      display: flex;
+      flex-direction: column;     
+      gap: 0px;                   
+      font-weight: normal;
+      font-size: 12px;
+    }
+
+    .leaflet-tour-title-text strong {
+      font-size: 12px;
+      font-weight: bold;
+    }
+
+    .tour-info-row {
+      display: flex;
+      gap: 10px;          /* space between distance and surface */
+    }
+
     #altitude-overlay {
       position: fixed; /* fixed so it stays above the map and viewport */
       left: 5px;
       right: 5px;
       bottom: 10px; /* initial offset from bottom */
-
       height: 20dvh; /* 20% of visible viewport height */
       max-height: 160px;
       min-height: 100px;
-
       background: rgba(255, 255, 255, 0.95);
       border-radius: 8px;
       box-shadow: 0 2px 8px rgba(0,0,0,0.3);
@@ -198,25 +240,58 @@
       z-index: 1000;
     }
 
+    /* ELEMENTS IN GALLERY */
 
     #gallery {
-      display: none;
-      flex-wrap: wrap;
-      justify-content: center;
-      padding: 10px 1.5rem 1.5rem 1.5rem;
-      gap: 2rem;
+      display: block;
+      padding: 1rem;
+      gap: 0.5rem;
       background-color: #f9f9f9;
       overflow-y: auto;
-      max-height: calc(100vh - 64px);
+      height: calc(100vh - 64px);
     }
+
+    .country-header { /* box with country info */
+      display: flex;
+      width: 100%;
+      align-items: center;
+      max-height: 40px;
+      padding: 0.5rem;
+      border-radius: 5px;
+      background: #eee;
+      font-weight: bold;
+      font-size: 1.2rem;
+    }
+
+    .country-header .flag {
+      height: 16px;
+      width: 24px;
+      border-radius: 5px;
+      flex-shrink: 0;
+    }
+
+    .country-content { /* box below country header */
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      align-items: stretch;
+      align-content: flex-start;
+      gap: 1rem;
+      padding: 0.5rem 0;
+      margin-bottom: 0.5rem;
+    }
+
+    /* ELEMENTS IN GRID VIEW */
 
     .gallery-item {
       width: 300px;
+      max-height: 500px;
+      display: flex;
+      flex-direction: column;
       background-color: #fff;
       border-radius: 8px;
       box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
       padding: 1rem;
-      max-height: 500px;
       overflow-y: auto;
       cursor: pointer;
     }
@@ -236,13 +311,11 @@
       margin-bottom: 0.4rem;
     }
 
-    .tour-title img.flag {
-      width: 24px;
+    .tour-title .flag {
       height: 16px;
-      border: 1px solid #ccc;
+      width: 24px;
       border-radius: 2px;
       flex-shrink: 0;
-      vertical-align: middle;
       margin-bottom: 0;
     }
 
@@ -250,20 +323,74 @@
     .tour-info,
     .tour-besonderheiten,
     .tour-strassenbelag {
+      margin-top: 0.25rem;
       font-size: 0.9rem;
       color: #555;
       margin-bottom: 0.4rem;
     }
 
-    .tour-weather {
-      margin-top: 1rem;
-      text-align: center; /* centers iframe + link */
+    .tour-download {
+      display: inline-block;
+      margin-top: 0.5rem;
+      font-size: 0.9rem;
+      color: #0077cc;
+      text-decoration: none;
+      outline: none;
     }
 
+    .tour-download:hover {
+      text-decoration: underline;
+    }
+
+    .tour-download a {
+      color: #0077cc;               /* text color */
+      text-decoration: none;          /* remove underline */
+      border: none;                   /* remove any border */
+      outline: none;                  /* remove focus outline */
+      background: none;               /* remove any background */
+      padding: 0;                     /* remove padding so no box */
+    }
+
+    .tour-download a:hover {
+      text-decoration: underline;     /* optional hover effect */
+    }
+
+    .carousel {                       /* Carousel */
+      position: relative;
+    }
+
+    .carousel-image {
+      max-width: 100%;
+      border-radius: 5px;
+      display: none;                  /* hidden by default */
+    }
+
+    .carousel-image.active {
+      display: block;                 /* only active one shows */
+    }
+
+    .carousel-arrow {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      background: rgba(255, 255, 255, 0.7);
+      border: none;
+      cursor: pointer;
+      font-size: 0.9rem;
+      padding: 0.2rem 0.3rem;
+      border-radius: 3px;
+    }
+
+    .carousel-arrow.left { left: 0.5rem; }
+    .carousel-arrow.right { right: 0.5rem; }
+
+    /* ELEMENTS IN WEATHER VIEW */
+    
     .tour-weather {
       margin-top: 1rem;
       display: flex;
       flex-direction: column;
+      text-align: center;               /* centers iframe + link */
       align-items: center;
       padding: 0.5rem;
       background: #fff;
@@ -271,255 +398,143 @@
       border-radius: 10px;
       box-shadow: 0 2px 4px rgba(0,0,0,0.05);
     }
+    /* ELEMENTS IN LIST VIEW */
 
-    .tour-download {
-      font-size: 0.85rem;
-      color: #0066cc;
-      text-decoration: none;
+    .tour-table {                       /* Table container */
+      border-collapse: separate;        /* separate rows for shadow */
+      border-spacing: 0 0.5rem;         /* vertical gap between rows */
+      width: 100%;                      /* stretch across screen */
+      margin-bottom: 0rem;
+      font-size: 0.9rem;
+      table-layout: fixed;              /* optional: distributes columns evenly */
     }
 
-    .tour-download:hover {
-      text-decoration: underline;
-    }
-
-    .leaflet-tour-title {
-      position: relative;        /* allows us to move it */
-      left: 20px;                /* distance from zoom buttons */
-      background: rgba(255, 255, 255, 0.9);
-      display: flex;             
-      align-items: stretch;      /* image matches text height */
-      gap: 10px;                  
-      padding: 4px 10px;
-      margin-top: 10px;
-      border-radius: 6px;
-      font-weight: bold;
-      font-size: 14px;
-      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
-    }
-
-    .leaflet-tour-title img {
-      height: auto;
-      max-height: 3.6em;         /* roughly 3 lines of text */
-      width: auto;                
-      border-radius: 3px;
-      box-shadow: 0 0 3px rgba(0,0,0,0.25);
-      object-fit: cover;          
-      align-self: center;        /* vertically center if smaller than text */
-    }
-
-    .leaflet-tour-title-text {
-      display: flex;
-      flex-direction: column;     
-      gap: 2px;                   
-      font-weight: normal;
-      font-size: 12px;
-    }
-
-    .leaflet-tour-title-text strong {
-      font-size: 14px;
-      font-weight: bold;
-    }
-
-    .custom-tooltip {
-      background-color: #f9f9f9;
-      border-radius: 6px;
-      padding: 8px;
-      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
-      color: #333;
-      font-size: 13px;
-      max-width: 140px;
-    }
-
-    /* Elements in list view */
-
-    .tour-table {
-      width: 100%;
-      border-collapse: collapse;
-      table-layout: fixed;
-      margin-top: 0;
-    }
-
-    .tour-table th,
-    .tour-table td {
-      border: 1px solid #ccc;
-      padding: 0.25rem 1rem;
-      text-align: left;
-      overflow: hidden;
-      white-space: nowrap;
-      text-overflow: ellipsis;
-    }
-
-    /* Wider first column */
-    .tour-table th:first-child,
+    .tour-table th:first-child,         /* Wider first column */
     .tour-table td:first-child {
-        width: 35%;  /* make first column wider */
+      width: 35%;
     }
 
-    /* Spread the remaining columns evenly */
-    .tour-table th:not(:first-child),
+    .tour-table th:not(:first-child),   /* Spread the remaining columns evenly */
     .tour-table td:not(:first-child) {
-        width: auto;  /* remaining space is divided evenly */
-    }
+        width: auto;
+     }
 
-    .tour-table th {
+    .tour-table th {                    /* Table header */
       background-color: #f0f0f0;
       font-weight: bold;
-      width: 20%; /* Adjust based on column count */
+      padding: 0.5rem 0.75rem;
+      border: none;
+      text-align: left;
     }
 
-    .tour-table tr:hover {
+    .tour-table td {                        /* Table body cells */
+      border: none;                         /* remove individual cell borders */
+      padding: 0.25rem 0.5rem;
+      vertical-align: middle;
+      word-wrap: break-word;                /* prevent overflow on small screens */
+    }
+
+    .tour-table tbody tr {                  /* Each table row looks like a card */
+      display: table-row;                   /* keep table semantics */
+      background-color: #fff;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+      border-radius: 6px;
+      transition: transform 0.15s, box-shadow 0.15s;
+    }
+    
+    .tour-table tbody tr:hover {            /* Row hover effect */
+      transform: translateY(-2px);
+      box-shadow: 0 3px 8px rgba(0,0,0,0.15);
       background-color: #eef6ff;
       cursor: pointer;
     }
 
-    .country-header {
-      display: flex;
-      align-items: center;
-      padding: 0.6rem;
-      background: #eee;
+    .tour-name {                            /* Tour name cell: bold */
       font-weight: bold;
-      border-radius: 5px;
-      margin-top: 0.5rem;
-           margin-top: 0rem;
-      width: 100%;
-      max-height: 50px;
     }
 
-    .country-header .flag {
-      height: 20px;
-      margin-right: 0.5rem;
+    .tour-download a {                      /* Download link styling */
+      color: #0077cc;
+      text-decoration: none;
+      border: none;
+      outline: none;
+      background: none;
+      padding: 0;
+      cursor: pointer;
+      font-weight: 500;
     }
 
-    .carousel {
-      position: relative;
+    .tour-download a:hover {
+      text-decoration: underline;
+    }
+
+    .tour-name-wrapper {                    /* Wraps thumbnail + text neatly */
       display: flex;
       align-items: center;
+      gap: 0.5rem;
     }
 
-    .carousel-images {
-      flex: 1;
-      overflow: hidden;
+    .tour-thumbnail {                       /* Thumbnail styling */
+      width: 40px;                          /* adjust size */
+      height: 25px;     
+      object-fit: cover;
+      border-radius: 4px;
+      flex-shrink: 0;
     }
 
-    .carousel-arrow {
-      background: rgba(0,0,0,0.4);
-      color: white;
-      border: none;
-      padding: 0.5rem;
-      cursor: pointer;
-      font-size: 1.2rem;
-      position: absolute;
-      top: 50%;
-      transform: translateY(-50%);
-      z-index: 2;
-    }
+  /* RESPONSIVE DESIGN FOR SMALL SCREENS */
 
-    .carousel-arrow.left {
-      left: 5px;
-    }
-
-    .carousel-arrow.right {
-      right: 5px;
-    }
-
-    /* Specific styles for mobile devices */
-
-    @media (max-width: 767px) {
+    @media (max-width: 768px) {
 
       #title-section {
-        flex-direction: column;
-        align-items: flex-start;
-        height: auto;
-        padding: 10px 15px;
+        gap: 0.2rem;                          /* space between buttons */
       }
 
-      #title-section {
-        display: flex;
-        flex-direction: column;
-        gap: 4px;  /* vertical spacing between title and buttons */
-        padding: 10px 15px;
+      .header-image {
+      height: 20px;
+      width: auto;
+      margin-right: 0.5rem;
+      border-radius: 2px;
       }
-
+      
       #title-section h1 {
         font-size: 1.25rem;
       }
 
-      .header-image {
+      .icon-btn {
+        width: 30px;                          /* fixed width */
+        height: 20px;                         /* fixed height */
+        border-radius: 4px;                   /* rounded corners */
+      }
+
+      .icon-btn i {
+        font-size: 1rem;                      /* icon size */
+      }
+
+      .tour-table thead {
         display: none;
       }
 
-      #button-bar {
-        display: grid;
-        grid-template-columns: 1fr 1fr; /* two equal columns */
-        gap: 10px; /* spacing between buttons */
-        width: 100%; /* make sure the grid spans container */
-      }
-
-      #button-bar button {
-        width: 100%;       /* each button fills its grid cell */
-        padding: 6px 15px; /* more padding for better touch targets */
-        text-align: center;
-        font-size: 0.75rem;
-      }
-
-      .filter-menu {
-        width: 100%;
-        left: 0;
-        right: 0;
-        min-width: unset;
-        max-width: 100vw;
-        box-sizing: border-box;
-        padding: 1rem 0.5rem 0.5rem 0.5rem;
-        overflow-x: hidden;
-      }
-
-      .filter-menu .filter-group {
-        width: 100%;
-        max-width: 100vw;
-        display: flex;
-        flex-direction: column;
-        gap: 0.7rem;
-      }
-
-      .filter-menu .filter-group select,
-      #filterResetBtn {
-        width: 100%;
-        max-width: 100%;
-        box-sizing: border-box;
-        font-size: 1rem;
-        margin-left: 0;
-        font-size: 0.75rem
-      }
-
-      /* Map & Gallery adjustments */
-
-      #map,
-      #gallery {
-        height: calc(100vh - (64px));
-      }
-
-      /* Make gallery scrollable nicely on small */
-      #gallery {
-        padding: 10px 10px 10px 10px;
-        max-height: calc(100vh - 130px);
-      }
-
-      /* Gallery items can be full width or smaller */
-      .gallery-item {
-        width: 100%;
-        max-width: 400px;
-        max-height: 500px;
-        overflow: hidden;
-      }
-
-      .tour-table th,
-      .tour-table td {
-        padding: 0.25rem 0.5rem;
-        font-size: 0.75rem;
+      .tour-table th, .tour-table td {
+        font-size: 0.7rem;
+        padding: 0.15rem 0.35rem;
         text-overflow: ellipsis;
-      }
+      }    
 
+      .tour-name-wrapper span {
+        display: -webkit-box;               /* for Chrome, Safari, Edge */
+        -webkit-box-orient: vertical;       /* vertical orientation */
+        -webkit-line-clamp: 2;              /* number of lines to show */
+        display: box;                       /* fallback for older browsers */
+        box-orient: vertical;               /* fallback orientation */
+        line-clamp: 2;                      /* standard property (future-proof) */
+        overflow: hidden;                   /* hide overflowing text */
+        text-overflow: ellipsis;            /* show … at the end */
+        line-height: 1.2em;                 /* control line spacing */
+        max-height: calc(1.2em * 2);        /* restrict container height to 2 lines */
+      }
     }
+
   </style>
 </head>
 
@@ -527,73 +542,74 @@
 
   <div id="title-section">
     <img src="images/Trackers.jpeg" alt="The Tracker's Logo" class="header-image" />
-    <h1>Touren & GPS-Tracks</h1>
+    <h1>Touren & Tracks</h1>
     <div class="flex-spacer"></div>
-    <div id="button-bar">
-    <button id="showMapBtn" class="app-button">Karte</button>
-    <button id="showGalleryBtn" class="app-button">Galerie</button>
-    <button id="showGalleryListViewBtn" class="app-button">Listenansicht</button>
-    <button id="showGalleryGridViewBtn" class="app-button">Gitteransicht</button>
-    <button id="showGalleryGridViewMeteoBtn" class="app-button">Wetter</button>
-    <button id="backBtn" class="app-button">Zurück</button>
-    <div class="filter-dropdown">
-      <button id="filterToggle" class="app-button" aria-haspopup="true" aria-expanded="false">Filter ▼</button>
-      <div id="filterMenu" class="filter-menu" role="menu" aria-hidden="true">
-        <div class="filter-group">
-          <label for="regionFilter">Region:</label>
-          <select id="regionFilter">
-            <option value="">Alle</option>
-            <option value="Frankreich">Frankreich</option>
-            <option value="Italien">Italien</option>
-            <option value="Marokko">Marokko</option>
-            <option value="Schweden">Schweden</option>
-            <option value="Schweiz">Schweiz</option>
-            <option value="Spanien">Spanien</option>
-            <option value="Europa">Europa</option>
-          </select>
-          <label for="levelFilter">Schwierigkeit:</label>
-          <select id="levelFilter">
-            <option value="">Alle</option>
-            <option value="Leicht">Leicht</option>
-            <option value="Mittel">Mittel</option>
-            <option value="Schwer">Schwer</option>
-          </select>
-          <label for="surfaceFilter">Strassenbelag:</label>
-          <select id="surfaceFilter">
-            <option value="">Alle</option>
-            <option value="Strasse">Strasse</option>
-            <option value="Off-road">Off-road</option>
-            <option value="Gemischt">Gemischt</option>
-          </select>
-        </div>
-        <button id="filterResetBtn"  class="app-button" type="button" style="margin-top:0.5rem;">Filter zurücksetzen</button>
+    <button id="mapBtn" class="icon-btn"><i class="fa-solid fa-map-location-dot"></i></button>
+    <button id="gridBtn" class="icon-btn"><i class="fa-solid fa-table-cells-large"></i></button>
+    <button id="listBtn" class="icon-btn"><i class="fa-solid fa-list"></i></button>
+    <button id="weatherBtn" class="icon-btn"><i class="fa-solid fa-cloud-sun-rain"></i></button>
+    <button id="returnBtn" class="icon-btn"><i class="fa-solid fa-rotate-left"></i></button>
+    <button id="filterBtn" class="icon-btn"><i class="fa-solid fa-filter"></i></button>
+
+    <div id="filterPanel" class="filter-panel hidden">
+      <label>
+        Land:
+        <select id="countryFilter">
+                <option value="">Alle</option>
+                <option value="Frankreich">Frankreich</option>
+                <option value="Italien">Italien</option>
+                <option value="Marokko">Marokko</option>
+                <option value="Schweden">Schweden</option>
+                <option value="Schweiz">Schweiz</option>
+                <option value="Spanien">Spanien</option>
+                <option value="Europa">Europa</option>
+        </select>
+      </label>
+      <label>
+        Schwierigkeit:
+        <select id="levelFilter">
+                <option value="">Alle</option>
+                <option value="Leicht">Leicht</option>
+                <option value="Mittel">Mittel</option>
+                <option value="Schwer">Schwer</option>
+        </select>
+      </label>
+      <label>
+        Strassenbelag:
+        <select id="surfaceFilter">
+          <option value="">Alle</option>
+                <option value="">Alle</option>
+                <option value="Strasse">Strasse</option>
+                <option value="Off-road">Off-road</option>
+                <option value="Gemischt">Gemischt</option>
+        </select>
+      </label>
+      <div class="filter-buttons">
+        <button id="filterApplyBtn" class="icon-btn"><i class="fa-solid fa-check"></i></button>
+        <button id="filterResetBtn" class="icon-btn"><i class="fa-solid fa-rotate-left"></i></button>
       </div>
-    </div>
     </div>
   </div>
 
   <div id="body-section">
     <div id="map">
-      <div id="map-spinner"></div>
+    <div id="map-spinner"></div>
       <div id="altitude-overlay">
         <canvas id="altitudeChart" style="width: 100%; height: 100%"></canvas>
       </div>
     </div>
     <div id="gallery"></div>
   </div>
-
+  
+  <script src="/touren.js"></script>
   <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet-gpx/1.5.0/gpx.min.js"></script>
-  <script src="/touren.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-    <script>
+  <script>
 
-    let mapInitialized = false;
 
-    /* =======================
-       FLAGS
-       ======================= */
+    //FLAGS
     const flags = {
       "Frankreich": "data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='24' height='16'%3e%3crect width='8' height='16' fill='%230034bf'/%3e%3crect x='8' width='8' height='16' fill='%23fff'/%3e%3crect x='16' width='8' height='16' fill='%23ed2939'/%3e%3c/svg%3e",
       "Italien": "data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='24' height='16'%3e%3crect width='8' height='16' fill='%23009641'/%3e%3crect x='8' width='8' height='16' fill='%23fff'/%3e%3crect x='16' width='8' height='16' fill='%23ce2b37'/%3e%3c/svg%3e",
@@ -604,336 +620,92 @@
       "Spanien": "data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='24' height='16'%3e%3crect width='24' height='16' fill='%23aa151b'/%3e%3crect y='5' height='6' width='24' fill='%23f1bf00'/%3e%3c/svg%3e",
       "Norwegen": "data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='24' height='16'%3e%3crect width='24' height='16' fill='%23ba0c2f'/%3e%3crect x='5' width='2' height='16' fill='%23015aaa'/%3e%3crect y='6' width='24' height='2' fill='%23015aaa'/%3e%3crect x='6' width='1' height='16' fill='%23fff'/%3e%3crect y='7' width='24' height='1' fill='%23fff'/%3e%3c/svg%3e",
     };
-
-    /* =======================
-       UTILITY CONSTANTS
-       ======================= */
-
-    const filterToggle = document.getElementById('filterToggle');
-    const filterMenu = document.getElementById('filterMenu');
-    const filterDropdown = document.querySelector('.filter-dropdown');
-    const regionFilter = document.getElementById('regionFilter');
-    const levelFilter = document.getElementById('levelFilter');
-    const surfaceFilter = document.getElementById('surfaceFilter');
-    const filterResetBtn = document.getElementById("filterResetBtn");
-    const showMapBtn = document.getElementById("showMapBtn");
-    const showGalleryBtn = document.getElementById("showGalleryBtn");
-    const showGalleryListViewBtn = document.getElementById("showGalleryListViewBtn");
-    const showGalleryGridViewBtn = document.getElementById("showGalleryGridViewBtn");
-    const showGalleryGridViewMeteoBtn = document.getElementById("showGalleryGridViewMeteoBtn");
-    const backBtn = document.getElementById("backBtn");
-    const gallery = document.getElementById("gallery");
     
+    // BUTTONS
+    const controls = {
+      mapBtn: document.getElementById("mapBtn"),
+      gridBtn: document.getElementById("gridBtn"),
+      listBtn: document.getElementById("listBtn"),
+      weatherBtn: document.getElementById("weatherBtn"),
+      filterBtn: document.getElementById("filterBtn"),
+      returnBtn: document.getElementById('returnBtn')
+    };
 
-    let currentTrack;
-    let allTracksLayers = [];
-    let currentViewMode = "grid";  // default
-    let lastGalleryViewMode = "grid"; // to remember last view mode
+      // Define visible buttons for each view
+      const views = { 
+        mapSingleTrack: ["returnBtn"],
+        mapFilteredTracks: ["returnBtn", "filterBtn"],
+        grid: ["mapBtn", "listBtn", "weatherBtn", "filterBtn"],
+        list: ["mapBtn", "gridBtn", "weatherBtn", "filterBtn"],
+        weather: ["returnBtn"]
+      };
 
-    /* =======================
-     CODE FOR MAP
-     ======================= */
-
-    // Function to initialize map view
-    function initializeMap() {
-      document.getElementById("map").style.display = "block";
-      document.getElementById("gallery").style.display = "none";
-      showGalleryBtn.style.display = "block";
-      showMapBtn.style.display = "none";
-      showGalleryListViewBtn.style.display = "none";
-      showGalleryGridViewBtn.style.display = "none";
-      showGalleryGridViewMeteoBtn.style.display = "none";
-      backBtn.style.display = "none";
-      filterDropdown.style.display = "block";
-
-      if (!mapInitialized) {
-        map = L.map('map')
-        const baseLayers = {
-          "Standard": L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-          }),
-          "Topo": L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
-          }),
-          "Satellit": L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', { 
-          })
-        };
-
-        baseLayers["Standard"].addTo(map);
-        L.control.layers(baseLayers).addTo(map);
-
-        // Add tour title to map
-        const tourTitleDiv = L.DomUtil.create('div', 'leaflet-tour-title');
-        tourTitleDiv.innerHTML = '';
-
-        // Insert it right after the zoom buttons
-        const zoomContainer = map.zoomControl.getContainer();
-        zoomContainer.parentNode.insertBefore(tourTitleDiv, zoomContainer.nextSibling);
-
-        // Store reference for later updates
-        map.tourTitleDiv = tourTitleDiv;
-
-        mapInitialized = true;
+      // Function to show/hide buttons based on current view
+      function showView(view) {
+        Object.values(controls).forEach(el => el.classList.add("hidden"));
+        views[view].forEach(id => controls[id].classList.remove("hidden"));
       }
-    }
 
-    // Function to render a single tour in the map
-    function renderMapSingleTour(gpxFile, tourPois) {
-    
-      filterDropdown.style.display = "none";
-      showGalleryBtn.style.display = "none";
-      backBtn.style.display = "block";
+    // VARIABLES
 
-      currentViewMode = "map"
+      const mapEl = document.getElementById("map");
+      const gallery = document.getElementById("gallery");
 
-      const tour = touren.find(t => t.gpx === gpxFile);
-      if (!tour) return;
-      map.tourTitleDiv.innerHTML = `
-      ${tour.bild && tour.bild.length ? `
-        <img src="${tour.bild[0]}" alt="${tour.name}">
-      ` : ''}
-      <div class="leaflet-tour-title-text">
-        <strong>${tour.name}</strong>
-        <div>Strecke: ${tour.distanz}</div>
-        <div>Belag: ${tour.strassenbelag}</div>
-      </div>
-    `;
 
-      if (currentTrack) map.removeLayer(currentTrack);
-      allTracksLayers.forEach(layer => map.removeLayer(layer));
-      allTracksLayers = [];
+      let map;
+      let mapInitialized = false; // flag to track if map is initialized
+      let currentViewMode = "grid";
+      let lastViewMode = null;
+      let currentTrack;
+      let allTracksLayers = [];
 
-      const startIcon = L.icon({
-        iconUrl: 'https://unpkg.com/leaflet-gpx@1.5.0/pin-icon-start.png',
-        iconSize: [16, 24],
-        iconAnchor: [8, 24],
-        popupAnchor: [0, -24],
-      });
-      const endIcon = L.icon({
-        iconUrl: 'https://unpkg.com/leaflet-gpx@1.5.0/pin-icon-end.png',
-        iconSize: [16, 24],
-        iconAnchor: [8, 24],
-        popupAnchor: [0, -24],
-      });
+    // CODE FOR MAP
 
-      currentTrack = new L.GPX(gpxFile, {
-        async: true,
-        marker_options: {
-          startIcon: startIcon,
-          endIcon: endIcon,
-          shadowUrl: 'https://unpkg.com/leaflet-gpx@1.5.0/pin-shadow.png'
-        }
-      }).on('loaded', function (e) {
-        // Get the overlay element
-        const overlay = document.getElementById('altitude-overlay');
+      // Function to initialize map view (independent of single track or all tracks view)
+      function initializeMap() {
+        
+        mapEl.style.display = "flex";
+        gallery.style.display = "none";
 
-        // Compute its height in pixels
-        const overlayHeight = overlay.offsetHeight;
-
-        // Fit GPX bounds with bottom padding equal to overlay height + a small margin
-        map.fitBounds(e.target.getBounds(), {
-          paddingBottomRight: [0, overlayHeight + 10], // 10px extra margin
-          paddingTopLeft: [10, 10] // optional small margin at top/left
-        });
-
-        // Render altitude profile
-        document.getElementById("altitude-overlay").style.display = "block"; // show
-        renderAltitudeProfile(gpxFile);
-
-      }).addTo(map);
-    }
-
-    // Global marker for chart-map sync
-    let chartCursorMarker = null;
-
-    function adjustOverlayForIOS() {
-      const overlay = document.getElementById('altitude-overlay');
-      if (!overlay) return;
-
-      const vh = window.innerHeight * 0.01;
-      const bottomOffset = 10; // base offset in px
-
-      overlay.style.height = `${vh * 25}px`; // ~25% of visible height
-      overlay.style.bottom = `${bottomOffset}px`; 
-    }
-
-    window.addEventListener('resize', adjustOverlayForIOS);
-    window.addEventListener('orientationchange', adjustOverlayForIOS);
-    adjustOverlayForIOS();
-
-    // Function to render the altitude profile
-    function renderAltitudeProfile(fixedGpxFile) {
-      fetch(fixedGpxFile)
-        .then(response => response.text())
-        .then(gpxText => {
-          const parser = new DOMParser();
-          const xml = parser.parseFromString(gpxText, "application/xml");
-          const trkpts = xml.getElementsByTagName("trkpt");
-
-          let dataPoints = [];
-          let totalDist = 0;
-          let lastLat = null, lastLon = null;
-
-          // Store also lat/lon for later lookup
-          let geoPoints = [];
-
-          function haversine(lat1, lon1, lat2, lon2) {
-            const R = 6371e3; 
-            const toRad = deg => deg * Math.PI / 180;
-            const dLat = toRad(lat2 - lat1);
-            const dLon = toRad(lon2 - lon1);
-            const a = Math.sin(dLat/2)**2 +
-                      Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) *
-                      Math.sin(dLon/2)**2;
-            return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-          }
-
-          for (let i = 0; i < trkpts.length; i++) {
-            let lat = parseFloat(trkpts[i].getAttribute("lat"));
-            let lon = parseFloat(trkpts[i].getAttribute("lon"));
-            let eleTag = trkpts[i].getElementsByTagName("ele")[0];
-            if (!eleTag) continue;
-            let ele = parseFloat(eleTag.textContent);
-
-            if (lastLat !== null && lastLon !== null) {
-              totalDist += haversine(lastLat, lastLon, lat, lon);
-            }
-            
-            let distKm = totalDist / 1000;
-
-            dataPoints.push({ x: distKm, y: ele });
-            geoPoints.push({ x: distKm, lat: lat, lon: lon });
-
-            lastLat = lat;
-            lastLon = lon;
-          }
-
-          const maxDist = dataPoints[dataPoints.length - 1].x;  // e.g., 53 km
-          let rawStep = maxDist <= 20 ? 1 : maxDist <= 100 ? 5 : maxDist <= 200 ? 10 : 20;
-          let step = Math.max(5, Math.ceil(rawStep / 5) * 5);
-
-          // Build an array of ticks to guarantee multiples of step appear
-          const ticksArray = [];
-          for (let v = 0; v <= maxDist; v += step) {
-            ticksArray.push(v);
-          }
-          const lastTick = Math.floor(maxDist / step) * step;
-          if (!ticksArray.includes(lastTick)) ticksArray.push(lastTick);
-
-          const ctx = document.getElementById('altitudeChart').getContext('2d');
-
-          // Destroy previous chart
-          if (window.altitudeChartInstance) window.altitudeChartInstance.destroy();
-
-          // Prevent map move when interacting with chart on touch devices
-          const altitudeDiv = document.getElementById("altitude-overlay");
-          L.DomEvent.disableClickPropagation(altitudeDiv);
-          L.DomEvent.disableScrollPropagation(altitudeDiv);
-
-          // Vertical line plugin for Chart.js
-          const verticalLinePlugin = {
-            id: 'verticalLine',
-            afterDraw: (chart) => {
-              if (chart.tooltip?._active?.length) {
-                let ctx = chart.ctx;
-                let x = chart.tooltip._active[0].element.x;
-                let topY = chart.scales.y.top;
-                let bottomY = chart.scales.y.bottom;
-
-                ctx.save();
-                ctx.beginPath();
-                ctx.moveTo(x, topY);
-                ctx.lineTo(x, bottomY);
-                ctx.lineWidth = 1.5;
-                ctx.strokeStyle = 'red';
-                ctx.stroke();
-                ctx.restore();
-              }
-            }
+        if (!mapInitialized) {
+          map = L.map(mapEl)
+          const baseLayers = {
+            "Standard": L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            }),
+            "Topo": L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
+            }),
+            "Satellit": L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', { 
+            })
           };
 
-          // Create the chart
-          window.altitudeChartInstance = new Chart(ctx, {
-            type: 'line',
-            data: {
-              datasets: [{
-                label: 'Altitude (m)',
-                data: dataPoints,
-                borderColor: 'rgba(0, 120, 200, 1)',
-                backgroundColor: 'rgba(135, 206, 250, 0.5)',
-                fill: true,
-                tension: 0.1,
-                pointRadius: 0
-              }]
-            },
-          options: {
-            events: ['mousemove', 'mouseout', 'click', 'touchstart', 'touchmove'],
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: { 
-              legend: { display: false },
-              tooltip: {
-                mode: 'index',
-                intersect: false,
-                enabled: true,
-                callbacks: {
-                  label: function(context) {
-                    const distKm = context.parsed.x;
-                    const match = geoPoints.find(p => Math.abs(p.x - distKm) < 0.05);
-                    if (match) {
-                      updateMapMarker(match.lat, match.lon);
-                    }
-                    return `${Math.round(context.parsed.y)} m`;
-                  }
-                }
-              }
-            },
-            interaction: {
-              mode: 'nearest',
-              axis: 'x',
-              intersect: false
-            },
-            scales: {
-              x: {
-                type: 'linear',
-                title: { display: true, text: "Distanz (km)" },
-                min: 0,
-                max: maxDist,
-                grid: { display: false },
-                ticks: {
-                  callback: function(value) {
-                    return ticksArray.includes(value) ? value : null;
-                  }
-                }
-              },
-              y: { title: { display: true, text: "Höhe (m)" } }
-            }
-          },
-          plugins: [verticalLinePlugin]
-        });
+          baseLayers["Standard"].addTo(map);
+          L.control.layers(baseLayers).addTo(map);
 
-        // Function to update marker on map
-        function updateMapMarker(lat, lon) {
-          if (!chartCursorMarker) {
-            chartCursorMarker = L.circleMarker([lat, lon], {
-              radius: 6,
-              color: "red",
-              fillColor: "red",
-              fillOpacity: 0.9
-            }).addTo(map);
-          } else {
-            chartCursorMarker.setLatLng([lat, lon]);
-          }
+          // Add tour title to map
+          const tourTitleDiv = L.DomUtil.create('div', 'leaflet-tour-title');
+          tourTitleDiv.innerHTML = '';
+
+          // Insert it right after the zoom buttons
+          const zoomContainer = map.zoomControl.getContainer();
+          zoomContainer.parentNode.insertBefore(tourTitleDiv, zoomContainer.nextSibling);
+
+          // Store reference for later updates
+          map.tourTitleDiv = tourTitleDiv;
+
+          mapInitialized = true;
         }
-      });
-    }
+      }
 
-    // Function to render all tours on map (depending on filters)
-    function renderMapFilteredTours() {
+      // Function to render all tours on map (depending on filters)
+      function renderMapFilteredTours() {
+        initializeMap();
+        showView("mapFilteredTracks");
+        lastViewMode = currentViewMode;
+        currentViewMode = "mapFilteredTracks";
 
-      document.getElementById("altitude-overlay").style.display = "none"; // hide
+        const overlay = document.getElementById("altitude-overlay");
+        if (overlay) overlay.style.display = "none";
       
-      initializeMap();
-      currentViewMode = "map"
-
       if (currentTrack) {
         map.removeLayer(currentTrack);
         currentTrack = null;
@@ -941,7 +713,7 @@
       allTracksLayers.forEach(layer => map.removeLayer(layer));
       allTracksLayers = [];
 
-      const filtered = getFilteredTours(); // ← only filtered tours
+      const filtered = getFilteredTours();        // ← only filtered tours
 
       const groupBounds = L.latLngBounds();
       let loadedCount = 0;
@@ -950,18 +722,21 @@
         const spinner = document.getElementById("map-spinner");
         spinner.style.display = "block";
         
-      const startIcon = L.icon({
-        iconUrl: 'https://unpkg.com/leaflet-gpx@1.5.0/pin-icon-start.png',
-        iconSize: [16, 24],
-        iconAnchor: [8, 24],
-        popupAnchor: [0, -24],
-      });
-      const endIcon = L.icon({
-        iconUrl: 'https://unpkg.com/leaflet-gpx@1.5.0/pin-icon-end.png',
-        iconSize: [16, 24],
-        iconAnchor: [8, 24],
-        popupAnchor: [0, -24],
-      });
+        const startIcon = L.divIcon({
+          html: '<i class="fa-solid fa-location-dot" style="color: #77bb41; font-size: 20px;"></i>',
+          className: '',                          // prevent Leaflet from adding default styles
+          iconSize: [32, 32],                     // size of the div (matches font-size roughly)
+          iconAnchor: [8, 20],                    // center-bottom anchor
+          popupAnchor: [0, -32]
+        });
+
+        const endIcon = L.divIcon({
+          html: '<i class="fa-solid fa-location-dot" style="color: #e63946; font-size: 20px;"></i>', // red for end
+          className: '',
+          iconSize: [32, 32],
+          iconAnchor: [8, 20],
+          popupAnchor: [0, -32]
+        });
 
       filtered.forEach(tour => {
         const gpxLayer = new L.GPX(tour.gpx, {
@@ -969,26 +744,25 @@
           marker_options: {
             startIcon,
             endIcon,
-            shadowUrl: 'https://unpkg.com/leaflet-gpx@1.5.0/pin-shadow.png'
           }
         }).on('loaded', e => {
           groupBounds.extend(e.target.getBounds());
           loadedCount++;
           if (loadedCount === filtered.length) {
             map.fitBounds(groupBounds);
-            spinner.style.display = "none"; // hide spinner when all GPX files loaded
+            spinner.style.display = "none";         // hide spinner when all GPX files loaded
           }
         })
           .on('addline', e => {
             const polyline = e.line;
 
             const tooltipContent = `
-        <div class="tooltip-wrapper" style="cursor:pointer; text-align:center; max-width: 110px; padding: 2px; white-space: normal; font-size: 11px; line-height: 1.2;">
-          <div style="font-weight: bold; margin-bottom: 2px; overflow-wrap: break-word;">${tour.name}</div>
-          <div style="font-weight: normal; color: #555; margin-bottom: 3px;">${tour.distanz}</div>
-          <img src="${tour.bild[0]}" alt="${tour.name}" style="width: 90px; height: auto; border-radius: 3px; box-shadow: 0 0 3px rgba(0,0,0,0.25);">
-        </div>
-      `;
+              <div class="tooltip-wrapper" style="cursor:pointer; text-align:center; max-width: 110px; padding: 2px; white-space: normal; font-size: 11px; line-height: 1.2;">
+                <div style="font-weight: bold; margin-bottom: 5px; overflow-wrap: break-word;">${tour.name}</div>
+
+                <img src="${tour.bild[0]}" alt="${tour.name}" style="width: 90px; height: auto; border-radius: 3px; box-shadow: 0 0 3px rgba(0,0,0,0.25);">
+              </div>
+            `;
             polyline.bindTooltip(tooltipContent, {
               permanent: true,
               direction: 'top',
@@ -997,9 +771,8 @@
             });
 
             polyline.getTooltip().on('click', () => {
-              document.querySelector(".leaflet-tour-title").textContent = tour.name;
-              
-              showGallery(tour); // Pass the selected tour to gallery
+             // Render single track view with overlay
+                renderMapSingleTrack(tour.gpx, tour.pois);
             });
 
             polyline.on('click', () => {
@@ -1014,401 +787,627 @@
 
       if (filtered.length === 0) {
         document.querySelector(".leaflet-tour-title").textContent = "Keine Touren gefunden";
+        spinner.style.display = "none";
       } else {
         document.querySelector(".leaflet-tour-title").textContent = "Gefilterte Touren";
       }
     }
 
-    /* =======================
-     CODE FOR GALLERY
-     ======================= */
+      // Function to render a single tour in the map
+      function renderMapSingleTrack(gpxFile, tourPois) {
+        initializeMap();
+        showView("mapSingleTrack");
+        lastViewMode = currentViewMode;
+        currentViewMode = "mapSingleTrack";
 
-    // Function to initialize gallery view
-    function showGallery(selectedTour = null, viewMode = "grid") {
-      
-      document.getElementById("map").style.display = "none";
-      document.getElementById("gallery").style.display = "flex";
-      
-      showGalleryBtn.style.display = "none";
-      showMapBtn.style.display = "block";
-      filterDropdown.style.display = "block";
+        const overlay = document.getElementById("altitude-overlay");
+          if (overlay) overlay.style.display = "none"; // hide until GPX loads
 
-      currentViewMode = viewMode;
-      gallery.innerHTML = "";
-
-      const filtered = getFilteredTours(selectedTour);
-
-      if (filtered.length === 0) {
-        gallery.innerHTML = `<div style="padding: 1rem; font-style: italic; color: #666;">
-        Keine Touren gefunden, die den Filtern entsprechen.
-        </div>`;
-        return;
-      }
-
-      if (viewMode === "grid") {
-        renderGridView(filtered);
-      } else if (viewMode === "list") {
-        renderListView(filtered);
-      } else if (viewMode === "meteo") {
-        renderGridViewMeteo(filtered);
-      }
-    }
-
-    // Function to render tours in grid view
-    function renderGridView(filtered) {
-      lastGalleryViewMode = "grid";
-      showGalleryListViewBtn.style.display = "block";
-      showGalleryGridViewBtn.style.display = "none";
-      showGalleryGridViewMeteoBtn.style.display = "block";
-      backBtn.style.display = "none";
-
-      // Clear gallery
-      gallery.innerHTML = "";
-
-      // Group tours by region
-      const grouped = {};
-      filtered.forEach(t => {
-        if (!grouped[t.region]) grouped[t.region] = [];
-        grouped[t.region].push(t);
-      });
-
-      // Render each region section, sorted by number of tours
-      Object.keys(grouped)
-        .sort((a, b) => grouped[b].length - grouped[a].length) // most tours first
-        // .sort((a, b) => grouped[a].length - grouped[b].length) // uncomment for fewest tours first
-        .forEach(region => {
-          // Sort tours alphabetically within each region
-          grouped[region].sort((a, b) => a.name.localeCompare(b.name));
-
-        // Region header
-        const header = document.createElement("div");
-        header.className = "country-header";
-        header.innerHTML = `
-          <img src="${flags[region] || ''}" alt="${region}" class="flag" style="height: 20px; vertical-align: middle; margin-right: 0.5rem;" />
-          <span class="country-name" style="font-size: 1.2rem; font-weight: bold;">${region}</span>
-        `;
-        gallery.appendChild(header);
-
-        // Render all tours for this region
-        grouped[region].forEach((t, index) => {
-          const galleryItem = document.createElement("div");
-          galleryItem.className = "gallery-item";
-          galleryItem.dataset.trackName = t.name;
-
-          // Build carousel HTML
-          const images = t.bild.map((filename, i) =>
-            `<img src="${filename}" 
-                  alt="${t.name}" 
-                  class="carousel-image" 
-                  style="max-width: 100%; border-radius: 5px; display: ${i === 0 ? 'block' : 'none'};">`
-          ).join("");
-
-          galleryItem.innerHTML = `
-            <div class="carousel" data-tour="${index}">
-              <button class="carousel-arrow left">&#10094;</button>
-              <div class="carousel-images">
-                ${images}
-              </div>
-              <button class="carousel-arrow right">&#10095;</button>
-            </div>
-            <div class="tour-title" style="font-weight: bold; margin-top: 0.5rem;">
-              <img src="${flags[t.region] || ''}" alt="${t.region}" class="flag" style="height: 16px; vertical-align: middle; margin-right: 0.5rem;" />
-              ${t.name}
-            </div>
-            <div class="tour-desc">${t.beschreibung}</div>
-            <div class="tour-info">Strecke: ${t.distanz}</div>
-            <div class="tour-besonderheiten">Besonderheiten: ${t.besonderheiten}</div>
-            <div class="tour-strassenbelag">Strassenbelag: ${t.strassenbelag}</div>
-            <a class="tour-download" href="${t.gpx}" download style="display: inline-block; margin-top: 0.5rem;">➤ GPX herunterladen</a>
-          `;
-
-          // Click anywhere on tour box → open tour in map
-          galleryItem.addEventListener("click", (event) => {
-            if (
-              event.target.closest(".carousel-arrow") || 
-              event.target.closest(".tour-download")
-            ) {
-              return;
-            }
-            initializeMap();
-            renderMapSingleTour(t.gpx);
-          });
-
-          gallery.appendChild(galleryItem);
-        });
-      });
-
-      // Enable carousel navigation after items are added
-      setupCarousels();
-    }
-
-    // Function to setup carousels for grid view
-    function setupCarousels() {
-      document.querySelectorAll(".carousel").forEach(carousel => {
-        const images = carousel.querySelectorAll(".carousel-image");
-        let currentIndex = 0;
-
-        carousel.querySelector(".left").addEventListener("click", e => {
-          e.stopPropagation(); // prevent triggering map click
-          images[currentIndex].style.display = "none";
-          currentIndex = (currentIndex - 1 + images.length) % images.length;
-          images[currentIndex].style.display = "block";
-        });
-
-        carousel.querySelector(".right").addEventListener("click", e => {
-          e.stopPropagation(); // prevent triggering map click
-          images[currentIndex].style.display = "none";
-          currentIndex = (currentIndex + 1) % images.length;
-          images[currentIndex].style.display = "block";
-        });
-      });
-    }
-
-    // Function to render tours in grid view with weather widget
-    function renderGridViewMeteo(filtered) {
-      lastGalleryViewMode = "grid";
-      filterDropdown.style.display = "none";
-      showMapBtn.style.display = "none";
-      showGalleryListViewBtn.style.display = "none";
-      showGalleryGridViewBtn.style.display = "none";
-      showGalleryGridViewMeteoBtn.style.display = "none";
-      backBtn.style.display = "flex";
-
-    // 1. Group tours by region
-    const grouped = {};
-    filtered.forEach(t => {
-      if (!grouped[t.region]) grouped[t.region] = [];
-      grouped[t.region].push(t);
-    });
-
-    // 2. Sort regions by number of tours, then loop
-    Object.keys(grouped)
-      .sort((a, b) => grouped[b].length - grouped[a].length) // most tours first
-      .forEach(region => {
-        // Sort tours alphabetically inside region
-        grouped[region].sort((a, b) => a.name.localeCompare(b.name));
-
-        // 3. Create region header
-        const header = document.createElement("div");
-        header.className = "country-header";
-        header.innerHTML = `
-          <img src="${flags[region] || ''}" alt="${region}" class="flag" style="height: 20px; vertical-align: middle; margin-right: 0.5rem;" />
-          <span class="country-name" style="font-size: 1.2rem; font-weight: bold;">${region}</span>
-        `;
-        gallery.appendChild(header);
-
-        // 4. Render tours for this region
-        grouped[region].forEach((t, index) => {
-          const galleryItem = document.createElement("div");
-          galleryItem.className = "gallery-item";
-          galleryItem.dataset.trackName = t.name;
-
-        galleryItem.innerHTML = `
-
-          <div class="tour-title" style="font-weight: bold; margin-top: 0.1rem;">
-            <img src="${flags[t.region] || ''}" alt="${t.region}" class="flag" style="height: 16px; vertical-align: middle; margin-right: 0.1rem;" />
-            ${t.name}
+        const tour = touren.find(t => t.gpx === gpxFile);
+        if (!tour) return;
+        map.tourTitleDiv.innerHTML = `
+        ${tour.bild && tour.bild.length ? `
+          <img src="${tour.bild[0]}" alt="${tour.name}">
+        ` : ''}
+        <div class="leaflet-tour-title-text">
+          <strong>${tour.name}</strong>
+          <div class="tour-info-row">
+            <span>Strecke: ${tour.distanz}</span>
+            <span>Belag: ${tour.strassenbelag}</span>
           </div>
-          
-          <!-- Weather Widget -->
-          <div class="tour-weather" style="margin-top: 1rem;">
-          <iframe
-            src="https://www.meteoblue.com/de/weather/widget/daily/${t.cityId.toLowerCase().replace(/\s+/g,'-')}_${t.region.toLowerCase()}_${t.cityId}?geoloc=fixed&days=5&tempunit=CELSIUS&windunit=KILOMETER_PER_HOUR&precipunit=MILLIMETER&coloured=coloured&pictoicon=1&maxtemperature=1&mintemperature=1&windspeed=1&windgust=0&winddirection=0&uv=0&humidity=0&precipitation=1&precipitationprobability=1&spot=0&pressure=0&layout=light"
-            frameborder="0"
-            scrolling="NO"
-            allowtransparency="true"
-            sandbox="allow-same-origin allow-scripts allow-popups allow-popups-to-escape-sandbox"
-            style="width: 230px; height: 270px">
-          </iframe>
-          <div>
-            <a href="https://www.meteoblue.com/de/weather/week/${t.cityId.toLowerCase().replace(/\s+/g,'-')}_${t.region.toLowerCase()}_${t.cityId}" target="_blank" rel="noopener"/a>
+          <div class="tour-info-row">
+            <span>Besonderheiten: ${tour.besonderheiten}</span>
           </div>
         </div>
         `;
 
-        gallery.appendChild(galleryItem);
+        if (currentTrack) map.removeLayer(currentTrack);
+        allTracksLayers.forEach(layer => map.removeLayer(layer));
+        allTracksLayers = [];
+
+        const startIcon = L.divIcon({
+          html: '<i class="fa-solid fa-location-dot" style="color: #77bb41; font-size: 20px;"></i>',
+          className: '',                    // prevent Leaflet from adding default styles
+          iconSize: [32, 32],               // size of the div (matches font-size roughly)
+          iconAnchor: [8, 20],              // center-bottom anchor
+        });
+
+        const endIcon = L.divIcon({
+          html: '<i class="fa-solid fa-location-dot" style="color: #e63946; font-size: 20px;"></i>', // red for end
+          className: '',
+          iconSize: [32, 32],
+          iconAnchor: [8, 20],
+        });
+
+        currentTrack = new L.GPX(gpxFile, {
+          async: true,
+          marker_options: {
+            startIcon: startIcon,
+            endIcon: endIcon,
+          }
+
+        }).on('loaded', function (e) {
+          // Get the overlay element
+          const overlay = document.getElementById('altitude-overlay');
+
+          // Compute its height in pixels
+          const overlayHeight = overlay.offsetHeight;
+
+          // Fit GPX bounds with bottom padding equal to overlay height + a small margin
+          map.fitBounds(e.target.getBounds(), {
+            paddingBottomRight: [0, overlayHeight + 10], // 10px extra margin
+            paddingTopLeft: [10, 10] // optional small margin at top/left
+          });
+
+          // Render altitude profile
+          document.getElementById("altitude-overlay").style.display = "block"; // show
+          renderAltitudeProfile(gpxFile);
+
+        }).addTo(map);
+      }
+
+      // Global marker for chart-map sync
+      let chartCursorMarker = null;
+
+      function adjustOverlayForIOS() {
+        const overlay = document.getElementById('altitude-overlay');
+        if (!overlay) return;
+
+        const vh = window.innerHeight * 0.01;
+        const bottomOffset = 10; // base offset in px
+
+        overlay.style.height = `${vh * 25}px`; // ~25% of visible height
+        overlay.style.bottom = `${bottomOffset}px`; 
+      }
+
+      window.addEventListener('resize', adjustOverlayForIOS);
+      window.addEventListener('orientationchange', adjustOverlayForIOS);
+      adjustOverlayForIOS();
+
+      // Function to render the altitude profile
+      function renderAltitudeProfile(fixedGpxFile) {
+        fetch(fixedGpxFile)
+          .then(response => response.text())
+          .then(gpxText => {
+            const parser = new DOMParser();
+            const xml = parser.parseFromString(gpxText, "application/xml");
+            const trkpts = xml.getElementsByTagName("trkpt");
+
+            let dataPoints = [];
+            let totalDist = 0;
+            let lastLat = null, lastLon = null;
+
+            // Store also lat/lon for later lookup
+            let geoPoints = [];
+
+            function haversine(lat1, lon1, lat2, lon2) {
+              const R = 6371e3; 
+              const toRad = deg => deg * Math.PI / 180;
+              const dLat = toRad(lat2 - lat1);
+              const dLon = toRad(lon2 - lon1);
+              const a = Math.sin(dLat/2)**2 +
+                        Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) *
+                        Math.sin(dLon/2)**2;
+              return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+            }
+
+            for (let i = 0; i < trkpts.length; i++) {
+              let lat = parseFloat(trkpts[i].getAttribute("lat"));
+              let lon = parseFloat(trkpts[i].getAttribute("lon"));
+              let eleTag = trkpts[i].getElementsByTagName("ele")[0];
+              if (!eleTag) continue;
+              let ele = parseFloat(eleTag.textContent);
+
+              if (lastLat !== null && lastLon !== null) {
+                totalDist += haversine(lastLat, lastLon, lat, lon);
+              }
+              
+              let distKm = totalDist / 1000;
+
+              dataPoints.push({ x: distKm, y: ele });
+              geoPoints.push({ x: distKm, lat: lat, lon: lon });
+
+              lastLat = lat;
+              lastLon = lon;
+            }
+
+            const maxDist = dataPoints[dataPoints.length - 1].x;  // e.g., 53 km
+            let rawStep = maxDist <= 20 ? 1 : maxDist <= 100 ? 5 : maxDist <= 200 ? 10 : 20;
+            let step = Math.max(5, Math.ceil(rawStep / 5) * 5);
+
+            // Build an array of ticks to guarantee multiples of step appear
+            const ticksArray = [];
+            for (let v = 0; v <= maxDist; v += step) {
+              ticksArray.push(v);
+            }
+            const lastTick = Math.floor(maxDist / step) * step;
+            if (!ticksArray.includes(lastTick)) ticksArray.push(lastTick);
+
+            const ctx = document.getElementById('altitudeChart').getContext('2d');
+
+            // Destroy previous chart
+            if (window.altitudeChartInstance) window.altitudeChartInstance.destroy();
+
+            // Prevent map move when interacting with chart on touch devices
+            const altitudeDiv = document.getElementById("altitude-overlay");
+            L.DomEvent.disableClickPropagation(altitudeDiv);
+            L.DomEvent.disableScrollPropagation(altitudeDiv);
+
+            // Vertical line plugin for Chart.js
+            const verticalLinePlugin = {
+              id: 'verticalLine',
+              afterDraw: (chart) => {
+                if (chart.tooltip?._active?.length) {
+                  let ctx = chart.ctx;
+                  let x = chart.tooltip._active[0].element.x;
+                  let topY = chart.scales.y.top;
+                  let bottomY = chart.scales.y.bottom;
+
+                  ctx.save();
+                  ctx.beginPath();
+                  ctx.moveTo(x, topY);
+                  ctx.lineTo(x, bottomY);
+                  ctx.lineWidth = 1.5;
+                  ctx.strokeStyle = 'red';
+                  ctx.stroke();
+                  ctx.restore();
+                }
+              }
+            };
+
+            // Create the chart
+            window.altitudeChartInstance = new Chart(ctx, {
+              type: 'line',
+              data: {
+                datasets: [{
+                  label: 'Altitude (m)',
+                  data: dataPoints,
+                  borderColor: 'rgba(0, 120, 200, 1)',
+                  backgroundColor: 'rgba(135, 206, 250, 0.5)',
+                  fill: true,
+                  tension: 0.1,
+                  pointRadius: 0
+                }]
+              },
+            options: {
+              events: ['mousemove', 'mouseout', 'click', 'touchstart', 'touchmove'],
+              responsive: true,
+              maintainAspectRatio: false,
+              plugins: { 
+                legend: { display: false },
+                tooltip: {
+                  mode: 'index',
+                  intersect: false,
+                  enabled: true,
+                  callbacks: {
+                    label: function(context) {
+                      const distKm = context.parsed.x;
+                      const match = geoPoints.find(p => Math.abs(p.x - distKm) < 0.05);
+                      if (match) {
+                        updateMapMarker(match.lat, match.lon);
+                      }
+                      return `${Math.round(context.parsed.y)} m`;
+                    }
+                  }
+                }
+              },
+              interaction: {
+                mode: 'nearest',
+                axis: 'x',
+                intersect: false
+              },
+              scales: {
+                x: {
+                  type: 'linear',
+                  title: { display: true, text: "Distanz (km)" },
+                  min: 0,
+                  max: maxDist,
+                  grid: { display: false },
+                  ticks: {
+                    callback: function(value) {
+                      return ticksArray.includes(value) ? value : null;
+                    }
+                  }
+                },
+                y: { title: { display: true, text: "Höhe (m)" } }
+              }
+            },
+            plugins: [verticalLinePlugin]
+          });
+
+          // Function to update marker on map
+          function updateMapMarker(lat, lon) {
+            if (!chartCursorMarker) {
+              chartCursorMarker = L.circleMarker([lat, lon], {
+                radius: 6,
+                color: "red",
+                fillColor: "red",
+                fillOpacity: 0.9
+              }).addTo(map);
+            } else {
+              chartCursorMarker.setLatLng([lat, lon]);
+            }
+          }
+        });
+      }
+    
+    // CODE FOR GALLERY
+
+      // Function to initialize gallery (independent of view)
+      function initializeGallery(selectedTour = null) {
+        mapEl.style.display = "none";
+        gallery.style.display = "block";
+        gallery.innerHTML = "";
+
+        const filtered = getFilteredTours(selectedTour);
+
+        if (filtered.length === 0) {
+          gallery.innerHTML = `<div style="padding: 1rem; font-style: italic; color: #666;">
+          Keine Touren gefunden, die den Filtern entsprechen.
+          </div>`;
+          return;
+        }
+
+        // Group tours by country
+        const grouped = {};
+        filtered.forEach(t => {
+          if (!grouped[t.country]) grouped[t.country] = [];
+          grouped[t.country].push(t);
+        });
+
+        // Render country headers, sorted by number of tours
+        Object.keys(grouped)
+          .sort((a, b) => grouped[b].length - grouped[a].length)
+          .forEach(country => {
+            const header = document.createElement("div"); // Header stretches across page
+            header.className = "country-header";
+            header.innerHTML = `
+              <img src="${flags[country] || ''}" alt="${country}" class="flag" 
+                  style="height: 20px; vertical-align: middle; margin-right: 0.5rem;" />
+              <span class="country-name" style="font-size: 1.2rem; font-weight: bold;">${country}</span>
+            `;
+            gallery.appendChild(header);
+
+            const content = document.createElement("div"); // Content section under header
+            content.className = "country-content";
+            content.dataset.country = country;
+            gallery.appendChild(content);
+          });
+
+        return grouped; // return tours so other functions can render them
+      }
+
+      // Function to render tours in grid view
+      function renderGalleryGrid(selectedTour = null) {
+
+        const grouped = initializeGallery(selectedTour);
+          if (!grouped) return; // nothing to show
+
+        showView("grid");
+        lastViewMode = currentViewMode;
+        currentViewMode = "grid";
+
+        // Render all tours for this country
+        Object.keys(grouped).forEach(country => {
+          grouped[country].sort((a, b) => a.name.localeCompare(b.name));
+
+          const content = gallery.querySelector(`.country-content[data-country="${country}"]`);
+
+          grouped[country].forEach((t, index) => {
+            const galleryItem = document.createElement("div");
+            galleryItem.className = "gallery-item";
+            galleryItem.dataset.trackName = t.name;
+
+            const images = t.bild.map((filename, i) =>
+              `<img src="${filename}" 
+                    alt="${t.name}" 
+                    class="carousel-image${i === 0 ? ' active' : ''}">`
+            ).join("");
+
+            galleryItem.innerHTML = `
+              <div class="carousel" data-tour="${index}">
+                <button class="carousel-arrow left">&#10094;</button>
+                <div class="carousel-images">
+                  ${images}
+                </div>
+                <button class="carousel-arrow right">&#10095;</button>
+              </div>
+              <div class="tour-title">
+                <img src="${flags[t.country] || ''}" alt="${t.country}" class="flag" />
+                ${t.name}
+              </div>
+              <div class="tour-desc">${t.beschreibung}</div>
+              <div class="tour-info">Strecke: ${t.distanz}</div>
+              <div class="tour-besonderheiten">Besonderheiten: ${t.besonderheiten}</div>
+              <div class="tour-strassenbelag">Strassenbelag: ${t.strassenbelag}</div>
+              <a class="tour-download" href="${t.gpx}" download>➤ GPX herunterladen</a>
+            `;
+
+            galleryItem.addEventListener("click", (event) => { // Open map when gallery box is clicked
+              if (event.target.closest(".carousel-arrow") || event.target.closest(".tour-download")) {
+                return;
+              }
+              renderMapSingleTrack(t.gpx);
+            });
+
+            content.appendChild(galleryItem);
+          });
+        });
+        
+          document.querySelectorAll(".carousel").forEach(carousel => { // Setup carousels for pictures
+
+            const images = carousel.querySelectorAll(".carousel-image");
+            let currentIndex = 0;
+
+            const showImage = (index) => {
+              images.forEach(img => img.classList.remove("active"));
+              images[index].classList.add("active");
+            };
+
+            carousel.querySelector(".left").addEventListener("click", e => {
+              e.stopPropagation();
+              currentIndex = (currentIndex - 1 + images.length) % images.length;
+              showImage(currentIndex);
+            });
+
+            carousel.querySelector(".right").addEventListener("click", e => {
+              e.stopPropagation();
+              currentIndex = (currentIndex + 1) % images.length;
+              showImage(currentIndex);
+            });
+          });
+        }
+
+      // Function to render tours in weather view
+      function renderGalleryWeather(selectedTour = null) {
+
+        const grouped = initializeGallery(selectedTour);
+          if (!grouped) return; // nothing to show
+
+        showView("weather");
+        lastViewMode = currentViewMode;
+        currentViewMode = "weather";
+
+        // Render all tours for this country
+        Object.keys(grouped).forEach(country => {
+          grouped[country].sort((a, b) => a.name.localeCompare(b.name));
+
+          const content = gallery.querySelector(`.country-content[data-country="${country}"]`);
+
+          grouped[country].forEach((t, index) => {
+            const galleryItem = document.createElement("div");
+            galleryItem.className = "gallery-item";
+            galleryItem.dataset.trackName = t.name;
+      
+          galleryItem.innerHTML = `
+
+            <div class="tour-title" style="font-weight: bold; margin-top: 0.1rem;">
+              <img src="${flags[t.country] || ''}" alt="${t.country}" class="flag" style="height: 16px; vertical-align: middle; margin-right: 0.1rem;" />
+              ${t.name}
+            </div>
+            
+            <!-- Weather Widget -->
+            <div class="tour-weather" style="margin-top: 1rem;">
+            <iframe
+              src="https://www.meteoblue.com/de/weather/widget/daily/${t.cityId.toLowerCase().replace(/\s+/g,'-')}_${t.country.toLowerCase()}_${t.cityId}?geoloc=fixed&days=5&tempunit=CELSIUS&windunit=KILOMETER_PER_HOUR&precipunit=MILLIMETER&coloured=coloured&pictoicon=1&maxtemperature=1&mintemperature=1&windspeed=1&windgust=0&winddirection=0&uv=0&humidity=0&precipitation=1&precipitationprobability=1&spot=0&pressure=0&layout=light"
+              frameborder="0"
+              scrolling="NO"
+              allowtransparency="true"
+              sandbox="allow-same-origin allow-scripts allow-popups allow-popups-to-escape-sandbox"
+              style="width: 230px; height: 270px">
+            </iframe>
+            <div>
+              <a href="https://www.meteoblue.com/de/weather/week/${t.cityId.toLowerCase().replace(/\s+/g,'-')}_${t.country.toLowerCase()}_${t.cityId}" target="_blank" rel="noopener"/a>
+            </div>
+          </div>
+          `;
+
+          content.appendChild(galleryItem);
+        });
       });
-    });
     }
 
     // Function to render tours in list view
-    function renderListView(filtered) {
+      function renderGalleryList(selectedTour = null) {
+        
+        const grouped = initializeGallery(selectedTour);
+          if (!grouped) return; // nothing to show
+        
+        showView("list");
+        lastViewMode = currentViewMode;
+        currentViewMode = "list";
 
-      lastGalleryViewMode = "list";
-      showGalleryListViewBtn.style.display = "none";
-      showGalleryGridViewBtn.style.display = "block";
-      showGalleryGridViewMeteoBtn.style.display = "none";
-      backBtn.style.display = "none";
+        // Render all tours for this country
+        Object.keys(grouped).forEach(country => {
+          grouped[country].sort((a, b) => a.name.localeCompare(b.name));
 
-      const grouped = {};
-      filtered.forEach(t => {
-        if (!grouped[t.region]) grouped[t.region] = [];
-        grouped[t.region].push(t);
-      });
+          const content = gallery.querySelector(`.country-content[data-country="${country}"]`);
 
-      Object.keys(grouped).forEach(region => {
-        // Country header
-        const header = document.createElement("div");
-        header.className = "country-header";
-        header.innerHTML = `
-      <img src="${flags[region] || ''}" alt="${region}" class="flag" />
-      <span class="country-name">${region}</span>
-    `;
-        gallery.appendChild(header);
+          const table = document.createElement("table"); // Create one table per country
+          table.className = "tour-table";
+       
+          table.innerHTML = `
+            <thead>
+              <tr>
+                <th>Tour</th>
+                <th>Distanz</th>
+                <th>Schwierigkeit</th>
+                <th>Strassenbelag</th>
+                <th>Download</th>
+              </tr>
+            </thead>
+            <tbody>
+            </tbody>
+          `;
+          const tbody = table.querySelector("tbody");
 
-        // Create table for this country
-        const table = document.createElement("table");
-        table.className = "tour-table";
+          grouped[country].forEach(t => { // Add each tour as a row
+            const row = document.createElement("tr"); 
 
-        // Table header row
-        table.innerHTML = `
-      <thead>
-        <tr>
-          <th>Tour</th>
-          <th>Distanz</th>
-          <th>Schwierigkeit</th>
-          <th>Strassenbelag</th>
-          <th>Download</th>
-        </tr>
-      </thead>
-      <tbody>
-      </tbody>
-    `;
-        const tbody = table.querySelector("tbody");
+              const thumbnail = t.bild && t.bild.length > 0 ? t.bild[0] : "images/placeholder.jpg";
 
-        // Add a row for each tour
-        grouped[region].forEach(t => {
-          const row = document.createElement("tr");
           row.innerHTML = `
-        <td class="tour-name">${t.name}</td>
-        <td class="tour-distance">${t.distanz}</td>
-        <td class="tour-difficulty">${t.schwierigkeit}</td>
-        <td class="tour-surface">${t.strassenbelag}</td>
-        <td class="tour-download"><a href="${t.gpx}" download>➤ GPX herunterladen</a></td>`;  
+            <td class="tour-name">
+              <div class="tour-name-wrapper">
+                     <img src="${thumbnail}" alt="${t.name}" class="tour-thumbnail" />
+        <span>${t.name}</span>
+        </div>
+        </td>
+            <td class="tour-distance">${t.distanz}</td>
+            <td class="tour-difficulty">${t.schwierigkeit}</td>
+            <td class="tour-surface">${t.strassenbelag}</td>
+            <td class="tour-download"><a href="${t.gpx}" download>➤ GPX</a></td>`;  
 
           // Click to open in map
           row.addEventListener("click", () => {
-            initializeMap();
-            renderMapSingleTour(t.gpx);
+            renderMapSingleTrack(t.gpx);
           });
 
           tbody.appendChild(row);
         });
-
-        gallery.appendChild(table);
+        
+        content.appendChild(table);
       });
     }
-
-    /* =======================
-       FILTER HANDLING
-       ======================= */
-
-    // Open/close filter dropdown
-    filterToggle.addEventListener('click', () => {
-      const isActive = filterMenu.classList.toggle('active');
-      filterToggle.setAttribute('aria-expanded', isActive ? 'true' : 'false');
-      filterMenu.setAttribute('aria-hidden', isActive ? 'false' : 'true');
-    });
-
-    // Open filter menu
-    function openFilterMenu() {
-      filterMenu.classList.add('active');
-      filterToggle.setAttribute('aria-expanded', 'true');
-      filterMenu.setAttribute('aria-hidden', 'false');
-    }
-
-    // Close filter menu
-    function closeFilterMenu() {
-      filterMenu.classList.remove('active');
-      filterToggle.setAttribute('aria-expanded', 'false');
-      filterMenu.setAttribute('aria-hidden', 'true');
-    }
-
-    // Filter reset button functionality
-    filterResetBtn.addEventListener("click", () => {
-      regionFilter.value = "";
-      levelFilter.value = "";
-      surfaceFilter.value = "";
-      if (currentViewMode === "grid") {
-        showGallery(null, "grid");
-        closeFilterMenu();
-      } else if (currentViewMode === "list") {
-        showGallery(null, "list");
-        closeFilterMenu();
-      } else if (currentViewMode === "map") {
-        renderMapFilteredTours();
-        closeFilterMenu();
-      }
-    });
-
-    // Filter function
-    function onFilterChange() {
-      if (currentViewMode === "grid") {
-        showGallery(null, "grid");
-      } else if (currentViewMode === "list") {
-        showGallery(null, "list");
-      } else if (currentViewMode === "map") {
-        renderMapFilteredTours();
-      }
-      closeFilterMenu();
-    }
-
-    // Function to get filtered tours based on selected filters
-    // If a specific tour is selected, return that tour only
-    // Otherwise, return all tours that match the filters
-    // If no filters are selected, return all tours
-
-    function getFilteredTours(selectedTour = null) {
-      const regionValue = regionFilter.value.toLowerCase();
-      const levelValue = levelFilter.value.toLowerCase();
-      const surfaceValue = surfaceFilter.value.toLowerCase();
-
-      if (selectedTour) {
-        return [selectedTour];
-      }
-
-      return touren.filter(t =>
-        (!regionValue || t.region.toLowerCase() === regionValue) &&
-        (!levelValue || t.schwierigkeit.toLowerCase() === levelValue) &&
-        (!surfaceValue || t.strassenbelag.toLowerCase() === surfaceValue)
-      );
-    }
-
-    regionFilter.addEventListener("change", onFilterChange);
-    levelFilter.addEventListener("change", onFilterChange);
-    surfaceFilter.addEventListener("change", onFilterChange);
-
-    /* =======================
-       BUTTON HANDLERS
-       ======================= */
     
-    // Show gallery view
-    showGalleryBtn.addEventListener("click", () => showGallery(null, lastGalleryViewMode));
+    // BUTTON HANDLERS
 
-    // Show map view
-    showMapBtn.addEventListener("click", () => renderMapFilteredTours(true));
+      mapBtn.addEventListener("click", () => renderMapFilteredTours());
+      gridBtn.addEventListener("click", () => renderGalleryGrid());
+      listBtn.addEventListener("click", () => renderGalleryList());
+      weatherBtn.addEventListener("click", () => renderGalleryWeather());
+      returnBtn.addEventListener("click", () => {
+        if (lastViewMode === "grid") {
+          renderGalleryGrid();
+        } else if (lastViewMode === "list") {
+          renderGalleryList();
+        } else if (lastViewMode === "weather") {
+          renderGalleryWeather();
+        } else if (lastViewMode === "mapFilteredTracks") {
+          renderMapFilteredTours();
+        } else {
+          renderGalleryGrid(); // fallback if nothing stored
+        }
+      });
 
-    // Show gallery in list view
-    showGalleryListViewBtn.addEventListener("click", () => showGallery(null, "list"));
+    // FILTER FUNCTIONALITY
 
-    // Show gallery in grid view
-    showGalleryGridViewBtn.addEventListener("click", () => showGallery(null, "grid"));
+    document.addEventListener("DOMContentLoaded", () => {
+      const filterBtn = document.getElementById("filterBtn");
+      const filterPanel = document.getElementById("filterPanel");
+      const filterApplyBtn = document.getElementById("filterApplyBtn");
+      const filterResetBtn = document.getElementById("filterResetBtn");
 
-    // Show gallery in grid view with weather widget
-    showGalleryGridViewMeteoBtn.addEventListener("click", () => showGallery(null, "meteo"));
+      // Prevent clicks inside the panel from closing it
+      filterPanel.addEventListener("click", (e) => {
+        e.stopPropagation();
+      });
 
-    // Show gallery in grid view coming from weather widget view
-    backBtn.addEventListener("click", () => showGallery(null, "grid"));
+      // Toggle filter panel
+      filterBtn.addEventListener("click", (e) => {
+        e.stopPropagation(); // Prevent click from triggering document listener
+        toggleFilterPanel();
+      });
 
-    /* =======================
-       ACTIONS ON LOAD
-      ======================= */
+      // Close panel when clicking outside
+      document.addEventListener("click", () => {
+        if (filterPanel.classList.contains("active")) {
+          closeFilterPanel();
+        }
+      });
+
+      function toggleFilterPanel() {
+        if (filterPanel.classList.contains("active")) {
+          closeFilterPanel();
+        } else {
+          openFilterPanel();
+        }
+      }
+
+      function openFilterPanel() {
+        filterPanel.classList.add("active");
+        filterPanel.classList.remove("hidden");
+      }
+
+      function closeFilterPanel() {
+        filterPanel.classList.remove("active");
+        setTimeout(() => filterPanel.classList.add("hidden"), 250);
+      }
+
+      // Apply filters
+      filterApplyBtn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        applyFilters();
+        closeFilterPanel();
+      });
+
+      // Reset filters
+      filterResetBtn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        countryFilter.value = "";
+        levelFilter.value = "";
+        surfaceFilter.value = "";
+        applyFilters();
+        closeFilterPanel();
+      });
+
+      // Function to refresh the current view
+      function applyFilters() {
+        if (currentViewMode === "grid") {
+          renderGalleryGrid();
+        } else if (currentViewMode === "list") {
+          renderGalleryList();
+        } else if (currentViewMode === "mapFilteredTracks") {
+          renderMapFilteredTours();
+        }
+      }
+    });
+
+
+      // Function to get filtered tours based on selected filters. If a specific tour is selected, return that tour only.
+      // Otherwise, return all tours that match the filters. If no filters are selected, return all tours
+        function getFilteredTours(selectedTour = null) {
+        const countryValue = countryFilter.value.toLowerCase();
+        const levelValue = levelFilter.value.toLowerCase();
+        const surfaceValue = surfaceFilter.value.toLowerCase();
+
+        if (selectedTour) {
+          return [selectedTour];
+        }
+
+        return touren.filter(t =>
+          (!countryValue || t.country.toLowerCase() === countryValue) &&
+          (!levelValue || t.schwierigkeit.toLowerCase() === levelValue) &&
+          (!surfaceValue || t.strassenbelag.toLowerCase() === surfaceValue)
+        );
+      }
+
+    // ACTIONS ON PAGE LOAD
 
     // Show gallery by default
- 
-    showGallery();
+      renderGalleryGrid();
 
-    // One-time tip overlay
+    // Show one-time tip overlay
     if (!localStorage.getItem('tourClickHintShown')) {
       const hint = document.createElement('div');
       hint.textContent = '💡 Klicke auf eine Tour, um sie auf der Karte zu sehen.';
@@ -1442,7 +1441,5 @@
     }
 
   </script>
-
 </body>
-
 </html>
