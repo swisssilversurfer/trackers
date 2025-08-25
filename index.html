@@ -29,10 +29,10 @@
       flex-wrap: wrap;
       height: 64px;
       box-sizing: border-box;
-      overflow: visible; /* allows content to overflow if needed */
+      overflow: visible;              /* allows content to overflow if needed */
       position: sticky;
-      top: 0;            /* stick to top */
-      z-index: 2000;     /* ensures it stays above other content */
+      top: 0;                         /* stick to top */
+      z-index: 2000;                  /* ensures it stays above other content */
     }
 
     .header-image {
@@ -42,7 +42,7 @@
     }
 
     .flex-spacer {
-      flex-grow: 1; /* pushes buttons to the right */
+      flex-grow: 1;                   /* pushes buttons to the right */
     }
 
     .icon-btn {
@@ -199,7 +199,9 @@
       font-weight: bold;
       font-size: 14px;
       box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
-
+      text-overflow: ellipsis;
+      white-space: normal;
+      word-break: break-word;
     }
 
     .leaflet-tour-title img {
@@ -515,6 +517,10 @@
 
       .icon-btn i {
         font-size: 1rem;                      /* icon size */
+      }
+
+      .leaflet-tour-title { 
+      max-width: 70%;
       }
 
       .gallery-item {
