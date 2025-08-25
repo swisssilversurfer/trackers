@@ -196,7 +196,7 @@
       padding: 4px 10px;
       margin-top: 10px;
       border-radius: 5px;
-      font-weight: normal;
+      font-weight: bold;
       font-size: 12px;
       box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
       text-overflow: ellipsis;
@@ -225,11 +225,6 @@
     .leaflet-tour-title-text strong {
       font-size: inherit;
       font-weight: bold;
-    }
-
-    .tour-info-row {
-      display: flex;
-      gap: 10px;          /* space between distance and surface */
     }
 
     #altitude-overlay {
@@ -517,10 +512,6 @@
 
       .icon-btn i {
         font-size: 1rem;                      /* icon size */
-      }
-
-      .leaflet-tour-title {
-        max-width: 70%; /* so it doesn’t collide with controls */
       }
 
       .gallery-item {
@@ -826,18 +817,13 @@
         if (!tour) return;
         map.tourTitleDiv.innerHTML = `
         ${tour.bild && tour.bild.length ? `
-          <img src="${tour.bild[0]}" alt="${tour.name}">
-        ` : ''}
-        <div class="leaflet-tour-title-text">
-          <strong>${tour.name}</strong>
-          <div class="tour-info-row">
-            <span>Strecke: ${tour.distanz}</span>
-            <span>Belag: ${tour.strassenbelag}</span>
+        <img src="${tour.bild[0]}" alt="${tour.name}">
+          ` : ''}
+          <div class="leaflet-tour-title-text">
+            <strong>${tour.name}</strong>
+            <div>Strecke: ${tour.distanz}</div>
+            <div>Belag: ${tour.strassenbelag}</div>
           </div>
-          <div class="tour-info-row">
-            <span>Besonderheiten: ${tour.besonderheiten}</span>
-          </div>
-        </div>
         `;
 
         if (currentTrack) map.removeLayer(currentTrack);
