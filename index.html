@@ -610,14 +610,16 @@
     </div>
     <div id="gallery"></div>
   </div>
-  
+
+  <!-- Load Leaflet CSS & JS - leaflet needs to load first, else pois.js won't work -->
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script> 
+  <script src="/pois.js"></script>
   <script src="/touren.js"></script>
-  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
   <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet-gpx/1.5.0/gpx.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
   <script>
-
 
     //FLAGS
     const flags = {
@@ -644,10 +646,10 @@
       // Define visible buttons for each view
       const views = { 
         mapSingleTrack: ["returnBtn"],
-        mapFilteredTracks: ["returnBtn", "filterBtn"],
+        mapFilteredTracks: ["gridBtn", "listBtn", "weatherBtn", "filterBtn"],
         grid: ["mapBtn", "listBtn", "weatherBtn", "filterBtn"],
         list: ["mapBtn", "gridBtn", "weatherBtn", "filterBtn"],
-        weather: ["returnBtn"]
+        weather: ["mapBtn","gridBtn", "listBtn", "filterBtn"]
       };
 
       // Function to show/hide buttons based on current view
@@ -660,7 +662,6 @@
 
       const mapEl = document.getElementById("map");
       const gallery = document.getElementById("gallery");
-
 
       let map;
       let mapInitialized = false; // flag to track if map is initialized
@@ -678,7 +679,7 @@
         gallery.style.display = "none";
 
         if (!mapInitialized) {
-          map = L.map(mapEl)
+          map = L.map(mapEl);
           const baseLayers = {
             "Standard": L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             }),
@@ -689,7 +690,25 @@
           };
 
           baseLayers["Standard"].addTo(map);
-          L.control.layers(baseLayers).addTo(map);
+
+        // POIs layer group
+        const poiLayer = L.layerGroup();
+
+          pois.forEach(poi => {
+            const icon = poiIcons[poi.type];   // lookup icon by type
+            L.marker([poi.lat, poi.lng], { icon })
+              .bindPopup(`
+              <b>${poi.name}</b><br>
+              ${poi.description}<br>
+              <a href="${poi.maps}" target="_blank">Google Maps</a>
+              `)
+              .addTo(poiLayer);
+        });
+         
+          //Add controls (base + overlays)
+          const overlays = { "Points of Interest": poiLayer };
+          L.control.layers(baseLayers, overlays).addTo(map);
+          poiLayer.addTo(map);
 
           // Add tour title to map
           const tourTitleDiv = L.DomUtil.create('div', 'leaflet-tour-title');
@@ -754,8 +773,14 @@
           marker_options: {
             startIcon,
             endIcon,
-          }
-        }).on('loaded', e => {
+          },
+          polyline_options: {
+            color: '#0066cc',   // <-- track color here (hex, named color, or rgb)
+            weight: 4,          // thickness of the line
+            opacity: 0.8,
+            lineCap: 'round'
+            }
+          }).on('loaded', e => {
           groupBounds.extend(e.target.getBounds());
           loadedCount++;
           if (loadedCount === filtered.length) {
@@ -849,6 +874,12 @@
           marker_options: {
             startIcon: startIcon,
             endIcon: endIcon,
+          },
+          polyline_options: {
+            color: '#0066cc',   // <-- track color here (hex, named color, or rgb)
+            weight: 4,          // thickness of the line
+            opacity: 0.8,
+            lineCap: 'round'
           }
 
         }).on('loaded', function (e) {
@@ -1382,6 +1413,8 @@
           renderGalleryGrid();
         } else if (currentViewMode === "list") {
           renderGalleryList();
+        } else if (currentViewMode === "weather") {
+          renderGalleryWeather();
         } else if (currentViewMode === "mapFilteredTracks") {
           renderMapFilteredTours();
         }
