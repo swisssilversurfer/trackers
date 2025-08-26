@@ -89,7 +89,22 @@ const pois = [
     lng: 7.32937,
     maps: "https://maps.app.goo.gl/QqLXPHBQx9zJgDWs6"
   },
-
+  {
+    name: "Campeggio il Sole",
+    description: "Campingplatz",
+    type: "camping",
+    lat: 44.32814,
+    lng: 7.29165,
+    maps: "https://maps.app.goo.gl/gFSVmqoWoeSsviUu9"
+  },
+  {
+    name: "Agricampeggio Monviso",
+    description: "Campingplatz",
+    type: "camping",
+    lat: 44.55556,
+    lng: 7.44127,
+    maps: "https://maps.app.goo.gl/2y6PVnVH5qVS4hB36"
+  },
 
   
   // Restaurants  
