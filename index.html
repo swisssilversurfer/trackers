@@ -242,6 +242,24 @@
       z-index: 1000;
     }
 
+    .overlay-control {
+      position: absolute;
+      bottom: 15px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(255,255,255,0.9);
+      border-radius: 8px;
+      padding: 2px 6px;
+      font-size: 12px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+    }
+
+    .overlay-control .leaflet-control-layers-overlays {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+    }
+
     /* ELEMENTS IN GALLERY */
 
     #gallery {
@@ -689,26 +707,15 @@
             })
           };
 
+          L.control.layers(baseLayers, null, { position: 'topright' }).addTo(map);  // Add main control (only base maps)
+
+          L.control.scale({                                                         // Add scale in bottom right
+            position: "bottomright",
+            metric: true,
+            imperial: false
+          }).addTo(map);
+
           baseLayers["Standard"].addTo(map);
-
-        // POIs layer group
-        const poiLayer = L.layerGroup();
-
-          pois.forEach(poi => {
-            const icon = poiIcons[poi.type];   // lookup icon by type
-            L.marker([poi.lat, poi.lng], { icon })
-              .bindPopup(`
-              <b>${poi.name}</b><br>
-              ${poi.description}<br>
-              <a href="${poi.maps}" target="_blank">Google Maps</a>
-              `)
-              .addTo(poiLayer);
-        });
-         
-          //Add controls (base + overlays)
-          const overlays = { "Points of Interest": poiLayer };
-          L.control.layers(baseLayers, overlays).addTo(map);
-          poiLayer.addTo(map);
 
           // Add tour title to map
           const tourTitleDiv = L.DomUtil.create('div', 'leaflet-tour-title');
@@ -734,99 +741,133 @@
 
         const overlay = document.getElementById("altitude-overlay");
         if (overlay) overlay.style.display = "none";
-      
-      if (currentTrack) {
-        map.removeLayer(currentTrack);
-        currentTrack = null;
-      }
-      allTracksLayers.forEach(layer => map.removeLayer(layer));
-      allTracksLayers = [];
 
-      const filtered = getFilteredTours();        // ← only filtered tours
+        // Remove old tracks
+        if (currentTrack) {
+          map.removeLayer(currentTrack);
+          currentTrack = null;
+        }
+        allTracksLayers.forEach(layer => map.removeLayer(layer));
+        allTracksLayers = [];
 
-      const groupBounds = L.latLngBounds();
-      let loadedCount = 0;
+        const filtered = getFilteredTours();
+        const groupBounds = L.latLngBounds();
+        let loadedCount = 0;
 
-       // Show spinner
         const spinner = document.getElementById("map-spinner");
         spinner.style.display = "block";
-        
-        const startIcon = L.divIcon({
-          html: '<i class="fa-solid fa-location-dot" style="color: #77bb41; font-size: 20px;"></i>',
-          className: '',                          // prevent Leaflet from adding default styles
-          iconSize: [32, 32],                     // size of the div (matches font-size roughly)
-          iconAnchor: [8, 20],                    // center-bottom anchor
-          popupAnchor: [0, -32]
+
+        // --- POIs layer group ---
+        if (!window.poiLayer) window.poiLayer = L.layerGroup(); 
+        else window.poiLayer.clearLayers(); // reuse existing layer
+
+        if (!window.tooltipLayer) window.tooltipLayer = L.layerGroup();
+        else window.tooltipLayer.clearLayers(); // reuse existing layer
+
+        const poiLayer = window.poiLayer;
+        const tooltipLayer = window.tooltipLayer;
+
+        pois.forEach(poi => {
+          const icon = poiIcons[poi.type];
+          L.marker([poi.lat, poi.lng], { icon })
+            .bindPopup(`
+              <b>${poi.name}</b><br>
+              ${poi.description}<br>
+              <a href="${poi.maps}" target="_blank">Google Maps</a>
+            `)
+            .addTo(poiLayer);
         });
 
-        const endIcon = L.divIcon({
-          html: '<i class="fa-solid fa-location-dot" style="color: #e63946; font-size: 20px;"></i>', // red for end
-          className: '',
-          iconSize: [32, 32],
-          iconAnchor: [8, 20],
-          popupAnchor: [0, -32]
-        });
-
-      filtered.forEach(tour => {
-        const gpxLayer = new L.GPX(tour.gpx, {
-          async: true,
-          marker_options: {
-            startIcon,
-            endIcon,
-          },
-          polyline_options: {
-            color: '#0066cc',   // <-- track color here (hex, named color, or rgb)
-            weight: 4,          // thickness of the line
-            opacity: 0.8,
-            lineCap: 'round'
-            }
-          }).on('loaded', e => {
-          groupBounds.extend(e.target.getBounds());
-          loadedCount++;
-          if (loadedCount === filtered.length) {
-            map.fitBounds(groupBounds);
-            spinner.style.display = "none";         // hide spinner when all GPX files loaded
+        // Helper: midpoint along polyline
+        function getPolylineMidpoint(polyline) {
+          const latlngs = polyline.getLatLngs();
+          if (!latlngs.length) return polyline.getBounds().getCenter();
+          let totalDistance = 0;
+          const distances = [0];
+          for (let i = 1; i < latlngs.length; i++) {
+            totalDistance += latlngs[i - 1].distanceTo(latlngs[i]);
+            distances.push(totalDistance);
           }
-        })
-          .on('addline', e => {
-            const polyline = e.line;
+          const halfDistance = totalDistance / 2;
+          for (let i = 1; i < distances.length; i++) {
+            if (distances[i] >= halfDistance) {
+              const ratio = (halfDistance - distances[i - 1]) / (distances[i] - distances[i - 1]);
+              const lat = latlngs[i - 1].lat + ratio * (latlngs[i].lat - latlngs[i - 1].lat);
+              const lng = latlngs[i - 1].lng + ratio * (latlngs[i].lng - latlngs[i - 1].lng);
+              return L.latLng(lat, lng);
+            }
+          }
+          return latlngs[Math.floor(latlngs.length / 2)];
+        }
 
-            const tooltipContent = `
-              <div class="tooltip-wrapper" style="cursor:pointer; text-align:center; max-width: 110px; padding: 2px; white-space: normal; font-size: 11px; line-height: 1.2;">
-                <div style="font-weight: bold; margin-bottom: 5px; overflow-wrap: break-word;">${tour.name}</div>
+        if (filtered.length === 0) {
+          spinner.style.display = "none";
+          document.querySelector(".leaflet-tour-title").textContent = "Keine Touren gefunden";
+          return;
+        }
 
-                <img src="${tour.bild[0]}" alt="${tour.name}" style="width: 90px; height: auto; border-radius: 3px; box-shadow: 0 0 3px rgba(0,0,0,0.25);">
-              </div>
-            `;
-            polyline.bindTooltip(tooltipContent, {
-              permanent: true,
-              direction: 'top',
-              className: 'custom-tooltip',
-              interactive: true
-            });
+        filtered.forEach(tour => {
+          const gpxLayer = new L.GPX(tour.gpx, {
+            async: true,
+            marker_options: {
+            startIcon: L.divIcon({ html: '', className: '', iconSize: [0, 0] }),
+            endIcon: L.divIcon({ html: '', className: '', iconSize: [0, 0] }),
+            shadowUrl: ''},
+            polyline_options: { color: '#0066cc', weight: 4, opacity: 0.8, lineCap: 'round' }
+            })
+            .on('loaded', e => {
+              groupBounds.extend(e.target.getBounds());
+              loadedCount++;
+              if (loadedCount === filtered.length) {
+                map.fitBounds(groupBounds);
+                spinner.style.display = "none";
+              }
+            })
+            .on('addline', e => {
+              const polyline = e.line;
+              const tooltipContent = `
+                <div class="tooltip-wrapper" style="cursor:pointer; text-align:center; max-width:110px; padding:2px; white-space:normal; font-size:11px; line-height:1.2;">
+                  <div style="font-weight:bold; margin-bottom:5px; overflow-wrap:break-word;">${tour.name}</div>
+                  <img src="${tour.bild[0]}" alt="${tour.name}" style="width:90px; height:auto; border-radius:3px; box-shadow:0 0 3px rgba(0,0,0,0.25);">
+                </div>
+              `;
+              const midpoint = getPolylineMidpoint(polyline);
+              const tooltipMarker = L.marker(midpoint, { opacity: 0, icon: L.divIcon({ iconSize:[0,0], iconAnchor:[0,0] }) })
+                .bindTooltip(tooltipContent, { permanent: true, direction:'center', className:'custom-tooltip', interactive:true, offset:[0,0] });
+              tooltipLayer.addLayer(tooltipMarker);
 
-            polyline.getTooltip().on('click', () => {
-             // Render single track view with overlay
-                renderMapSingleTrack(tour.gpx, tour.pois);
-            });
-
-            polyline.on('click', () => {
-              map.fitBounds(polyline.getBounds());
-            });
-
-          })
-          .addTo(map);
-
-        allTracksLayers.push(gpxLayer);
+              try {
+      tooltipMarker.on('click', () => {
+        renderMapSingleTrack(tour.gpx, tour.pois);
       });
 
-      if (filtered.length === 0) {
-        document.querySelector(".leaflet-tour-title").textContent = "Keine Touren gefunden";
-        spinner.style.display = "none";
-      } else {
+      // ensure tooltip opens
+      tooltipMarker.on('add', () => tooltipMarker.openTooltip());
+
+              } catch (err) {
+                console.error('Tooltip click setup failed', err);
+              }
+            })
+            .addTo(map);
+
+          allTracksLayers.push(gpxLayer);
+        });
+
+        poiLayer.addTo(map);
+        tooltipLayer.addTo(map);
+
+        // Overlay control
+        const overlayControl = L.control.layers(null, { "POIs": poiLayer, "Tour-Info": tooltipLayer }, { collapsed:false, position:'bottomleft' });
+        overlayControl.addTo(map);
+
+        // Move to bottom center
+        const overlayContainer = overlayControl.getContainer();
+        document.querySelector(".leaflet-bottom.leaflet-left").removeChild(overlayContainer);
+        map.getContainer().appendChild(overlayContainer);
+        overlayContainer.classList.add("overlay-control");
+
         document.querySelector(".leaflet-tour-title").textContent = "Gefilterte Touren";
       }
-    }
 
       // Function to render a single tour in the map
       function renderMapSingleTrack(gpxFile, tourPois) {
@@ -834,6 +875,7 @@
         showView("mapSingleTrack");
         lastViewMode = currentViewMode;
         currentViewMode = "mapSingleTrack";
+        tooltipLayer.eachLayer(marker => marker.closeTooltip());
 
         const overlay = document.getElementById("altitude-overlay");
           if (overlay) overlay.style.display = "none"; // hide until GPX loads
@@ -885,18 +927,16 @@
         }).on('loaded', function (e) {
           // Get the overlay element
           const overlay = document.getElementById('altitude-overlay');
-
-          // Compute its height in pixels
-          const overlayHeight = overlay.offsetHeight;
+          overlay.style.display = "block";                      // Make it visible first (height cannot be calculated when hidden) 
+          const overlayHeight = overlay.offsetHeight;           // Compute its height in pixels
 
           // Fit GPX bounds with bottom padding equal to overlay height + a small margin
           map.fitBounds(e.target.getBounds(), {
-            paddingBottomRight: [0, overlayHeight + 10], // 10px extra margin
-            paddingTopLeft: [10, 10] // optional small margin at top/left
+            paddingBottomRight: [0, overlayHeight + 20],        // 10px extra margin
+            paddingTopLeft: [30, 30]                            // optional small margin at top/left
           });
 
-          // Render altitude profile
-          document.getElementById("altitude-overlay").style.display = "block"; // show
+          document.getElementById("altitude-overlay").style.display = "block";  // Render altitude profile
           renderAltitudeProfile(gpxFile);
 
         }).addTo(map);
@@ -1420,7 +1460,6 @@
         }
       }
     });
-
 
       // Function to get filtered tours based on selected filters. If a specific tour is selected, return that tour only.
       // Otherwise, return all tours that match the filters. If no filters are selected, return all tours

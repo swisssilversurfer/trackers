@@ -130,6 +130,115 @@ const pois = [
   },
 
 
+
+ 
+  {
+    name: "Col de l'Iseran",
+    description: "Col de l'Iseran",
+    type: "mountain",
+    lat: 45.41721,
+    lng: 7.03067,
+    maps: "https://www.google.com/maps?q=45.41721,7.03067"
+  },
+  {
+    name: "Passo dello Stelvio, Stilfser Joch",
+    description: "Passo dello Stelvio, Stilfser Joch",
+    type: "mountain",
+    lat: 46.52863,
+    lng: 10.45308,
+    maps: "https://www.google.com/maps?q=46.52863,10.45308"
+  },
+  {
+    name: "Col d'Agnel, Colle dell'Agnello",
+    description: "Col d'Agnel, Colle dell'Agnello",
+    type: "mountain",
+    lat: 44.68401,
+    lng: 6.97967,
+    maps: "https://www.google.com/maps?q=44.68401,6.97967"
+  },
+  {
+    name: "Col de la Bonette",
+    description: "Col de la Bonette",
+    type: "mountain",
+    lat: 44.32667,
+    lng: 6.80744,
+    maps: "https://www.google.com/maps?q=44.32667,6.80744"
+  },
+  {
+    name: "Col du Galibier",
+    description: "Col du Galibier",
+    type: "mountain",
+    lat: 45.06412,
+    lng: 6.40785,
+    maps: "https://www.google.com/maps?q=45.06412,6.40785"
+  },
+  {
+    name: "Passo di Gavia",
+    description: "Passo di Gavia",
+    type: "mountain",
+    lat: 46.34353,
+    lng: 10.48761,
+    maps: "https://www.google.com/maps?q=46.34353,10.48761"
+  },
+  {
+    name: "Hochtor (Grossglockner Hochalpenstrasse)",
+    description: "Hochtor (Grossglockner Hochalpenstrasse)",
+    type: "mountain",
+    lat: 47.08118,
+    lng: 12.84262,
+    maps: "https://www.google.com/maps?q=47.08118,12.84262"
+  },
+  {
+    name: "Umbrailpass, Passo dell'Umbrail",
+    description: "Umbrailpass, Passo dell'Umbrail",
+    type: "mountain",
+    lat: 46.54159,
+    lng: 10.43315,
+    maps: "https://www.google.com/maps?q=46.54159,10.43315"
+  },
+  {
+    name: "Nufenenpass, Passo della Novena",
+    description: "Nufenenpass, Passo della Novena",
+    type: "mountain",
+    lat: 46.47726,
+    lng: 8.38704,
+    maps: "https://www.google.com/maps?q=46.47726,8.38704"
+  },
+  {
+    name: "Timmelsjoch, Passo Rombo",
+    description: "Timmelsjoch, Passo Rombo",
+    type: "mountain",
+    lat: 46.90529,
+    lng: 11.09744,
+    maps: "https://www.google.com/maps?q=46.90529,11.09744"
+  },
+  {
+    name: "Col du Grand Saint Bernard, Colle del Gran San Bernardo, Grosser Sankt Bernhard",
+    description: "Col du Grand Saint Bernard, Colle del Gran San Bernardo, Grosser Sankt Bernhard",
+    type: "mountain",
+    lat: 45.86917,
+    lng: 7.17031,
+    maps: "https://www.google.com/maps?q=45.86917,7.17031"
+  },
+  {
+    name: "Furkapass",
+    description: "Furkapass",
+    type: "mountain",
+    lat: 46.57271,
+    lng: 8.41521,
+    maps: "https://www.google.com/maps?q=46.57271,8.41521"
+  },
+  {
+    name: "Flüelapass",
+    description: "Flüelapass",
+    type: "mountain",
+    lat: 46.75053,
+    lng: 9.94718,
+    maps: "https://www.google.com/maps?q=46.75053,9.94718"
+  },
+
+
+
   // Others
   {
     name: "Galleria del Seguret",
