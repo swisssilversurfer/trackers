@@ -122,7 +122,7 @@ const pois = [
   // Bergpässe
   {
     "name": "Col de l'Iseran",
-    "description": "Col de l'Iseran",
+    "description": "",
     "type": "mountain",
     "lat": 45.41721,
     "lng": 7.03067,
@@ -130,7 +130,7 @@ const pois = [
   },
   {
     "name": "Passo dello Stelvio, Stilfser Joch",
-    "description": "Passo dello Stelvio, Stilfser Joch",
+    "description": "",
     "type": "mountain",
     "lat": 46.52863,
     "lng": 10.45308,
@@ -138,7 +138,7 @@ const pois = [
   },
   {
     "name": "Col des Aravis",
-    "description": "Col des Aravis",
+    "description": "",
     "type": "mountain",
     "lat": 45.87229,
     "lng": 6.46488,
@@ -162,7 +162,7 @@ const pois = [
   },
   {
     "name": "Passo di Gavia",
-    "description": "Passo di Gavia",
+    "description": "",
     "type": "mountain",
     "lat": 46.34353,
     "lng": 10.48761,
@@ -170,7 +170,7 @@ const pois = [
   },
   {
     "name": "Umbrailpass, Passo dell'Umbrail",
-    "description": "Umbrailpass, Passo dell'Umbrail",
+    "description": "",
     "type": "mountain",
     "lat": 46.54159,
     "lng": 10.43315,
@@ -178,15 +178,15 @@ const pois = [
   },
   {
     "name": "Nufenenpass, Passo della Novena",
-    "description": "Nufenenpass, Passo della Novena",
+    "description": "",
     "type": "mountain",
     "lat": 46.47726,
     "lng": 8.38704,
     "maps": "https://www.google.com/maps?q=46.47726,8.38704"
   },
   {
-    "name": "Col du Grand Saint Bernard, Colle del Gran San Bernardo, Grosser Sankt Bernhard",
-    "description": "Col du Grand Saint Bernard, Colle del Gran San Bernardo, Grosser Sankt Bernhard",
+    "name": "Col du Grand Saint Bernard, Colle del Gran San Bernardo",
+    "description": "",
     "type": "mountain",
     "lat": 45.86917,
     "lng": 7.17031,
@@ -194,7 +194,7 @@ const pois = [
   },
   {
     "name": "Furkapass",
-    "description": "Furkapass",
+    "description": "",
     "type": "mountain",
     "lat": 46.57271,
     "lng": 8.41521,
@@ -202,7 +202,7 @@ const pois = [
   },
   {
     "name": "Flüelapass",
-    "description": "Flüelapass",
+    "description": "",
     "type": "mountain",
     "lat": 46.75053,
     "lng": 9.94718,
@@ -210,7 +210,7 @@ const pois = [
   },
   {
     "name": "Col d'Izoard",
-    "description": "Col d'Izoard",
+    "description": "",
     "type": "mountain",
     "lat": 44.81974,
     "lng": 6.73499,
@@ -218,7 +218,7 @@ const pois = [
   },
   {
     "name": "Col de la Lombarde, Colle della Lombarda",
-    "description": "Col de la Lombarde, Colle della Lombarda",
+    "description": "",
     "type": "mountain",
     "lat": 44.20257,
     "lng": 7.15011,
@@ -226,7 +226,7 @@ const pois = [
   },
   {
     "name": "Col de la Cayolle",
-    "description": "Col de la Cayolle",
+    "description": "",
     "type": "mountain",
     "lat": 44.25919,
     "lng": 6.74397,
@@ -234,7 +234,7 @@ const pois = [
   },
   {
     "name": "Albulapass",
-    "description": "Albulapass",
+    "description": "",
     "type": "mountain",
     "lat": 46.58253,
     "lng": 9.83782,
@@ -242,7 +242,7 @@ const pois = [
   },
   {
     "name": "Colle di Sampeyre",
-    "description": "Colle di Sampeyre",
+    "description": "",
     "type": "mountain",
     "lat": 44.55098,
     "lng": 7.11959,
@@ -250,7 +250,7 @@ const pois = [
   },
   {
     "name": "Julierpass",
-    "description": "Julierpass",
+    "description": "",
     "type": "mountain",
     "lat": 46.47224,
     "lng": 9.72766,
@@ -258,7 +258,7 @@ const pois = [
   },
   {
     "name": "Col d'Allos",
-    "description": "Col d'Allos",
+    "description": "",
     "type": "mountain",
     "lat": 44.29726,
     "lng": 6.59422,
@@ -266,7 +266,7 @@ const pois = [
   },
   {
     "name": "Passo Sella, Sellajoch",
-    "description": "Passo Sella, Sellajoch",
+    "description": "",
     "type": "mountain",
     "lat": 46.50824,
     "lng": 11.76719,
@@ -274,7 +274,7 @@ const pois = [
   },
   {
     "name": "Passo Giau",
-    "description": "Passo Giau",
+    "description": "",
     "type": "mountain",
     "lat": 46.48258,
     "lng": 12.05362,
@@ -282,7 +282,7 @@ const pois = [
   },
   {
     "name": "Sustenpass",
-    "description": "Sustenpass",
+    "description": "",
     "type": "mountain",
     "lat": 46.73046,
     "lng": 8.44933,
@@ -290,7 +290,7 @@ const pois = [
   },
   {
     "name": "Passo Valparola",
-    "description": "Passo Valparola",
+    "description": "",
     "type": "mountain",
     "lat": 46.52511,
     "lng": 11.99748,
@@ -298,7 +298,7 @@ const pois = [
   },
   {
     "name": "Col du Petit Saint Bernard, Colle del Piccolo San Bernardo",
-    "description": "Col du Petit Saint Bernard, Colle del Piccolo San Bernardo",
+    "description": "",
     "type": "mountain",
     "lat": 45.67978,
     "lng": 6.88338,
@@ -306,7 +306,7 @@ const pois = [
   },
   {
     "name": "Grimselpass",
-    "description": "Grimselpass",
+    "description": "",
     "type": "mountain",
     "lat": 46.56122,
     "lng": 8.33665,
@@ -314,7 +314,7 @@ const pois = [
   },
   {
     "name": "Ofenpass, Pass dal Fuorn",
-    "description": "Ofenpass, Pass dal Fuorn",
+    "description": "n",
     "type": "mountain",
     "lat": 46.63969,
     "lng": 10.29241,
@@ -322,7 +322,7 @@ const pois = [
   },
   {
     "name": "Splügenpass, Passo dello Spluga",
-    "description": "Splügenpass, Passo dello Spluga",
+    "description": "",
     "type": "mountain",
     "lat": 46.50551,
     "lng": 9.33036,
@@ -330,7 +330,7 @@ const pois = [
   },
   {
     "name": "Col de Vars",
-    "description": "Col de Vars",
+    "description": "",
     "type": "mountain",
     "lat": 44.53886,
     "lng": 6.70278,
@@ -338,7 +338,7 @@ const pois = [
   },
   {
     "name": "Gotthardpass, Passo San Gottardo",
-    "description": "Gotthardpass, Passo San Gottardo",
+    "description": "",
     "type": "mountain",
     "lat": 46.55884,
     "lng": 8.56211,
@@ -346,7 +346,7 @@ const pois = [
   },
   {
     "name": "Passo Giovo, Jaufenpass",
-    "description": "Passo Giovo, Jaufenpass",
+    "description": "",
     "type": "mountain",
     "lat": 46.83939,
     "lng": 11.32109,
@@ -354,7 +354,7 @@ const pois = [
   },
   {
     "name": "Col du Mont Cenis, Colle del Moncenisio",
-    "description": "Col du Mont Cenis, Colle del Moncenisio",
+    "description": "",
     "type": "mountain",
     "lat": 45.25989,
     "lng": 6.90074,
@@ -362,7 +362,7 @@ const pois = [
   },
   {
     "name": "San-Bernardino-Pass",
-    "description": "San-Bernardino-Pass",
+    "description": "",
     "type": "mountain",
     "lat": 46.49587,
     "lng": 9.17063,
@@ -370,7 +370,7 @@ const pois = [
   },
   {
     "name": "Col du Lautaret",
-    "description": "Col du Lautaret",
+    "description": "",
     "type": "mountain",
     "lat": 45.03542,
     "lng": 6.40521,
@@ -378,7 +378,7 @@ const pois = [
   },
   {
     "name": "Simplonpass",
-    "description": "Simplonpass",
+    "description": "",
     "type": "mountain",
     "lat": 46.24998,
     "lng": 8.03145,
@@ -386,7 +386,7 @@ const pois = [
   },
   {
     "name": "Col de la Madeleine",
-    "description": "Col de la Madeleine",
+    "description": "",
     "type": "mountain",
     "lat": 45.43489,
     "lng": 6.37547,
@@ -394,7 +394,7 @@ const pois = [
   },
   {
     "name": "Passo San Marco",
-    "description": "Passo San Marco",
+    "description": "",
     "type": "mountain",
     "lat": 46.04714,
     "lng": 9.62282,
@@ -402,7 +402,7 @@ const pois = [
   },
   {
     "name": "Cormet de Roselend",
-    "description": "Cormet de Roselend",
+    "description": "",
     "type": "mountain",
     "lat": 45.69132,
     "lng": 6.69063,
@@ -410,7 +410,7 @@ const pois = [
   },
   {
     "name": "Lukmanierpass, Passo del Lucomagno",
-    "description": "Lukmanierpass, Passo del Lucomagno",
+    "description": "",
     "type": "mountain",
     "lat": 46.56366,
     "lng": 8.80134,
@@ -418,7 +418,7 @@ const pois = [
   },
   {
     "name": "Passe del Tonale",
-    "description": "Passe del Tonale",
+    "description": "",
     "type": "mountain",
     "lat": 46.25787,
     "lng": 10.58051,
@@ -426,7 +426,7 @@ const pois = [
   },
   {
     "name": "Col de la Madeleine (Route de l'Iseran)",
-    "description": "Col de la Madeleine (Route de l'Iseran)",
+    "description": "",
     "type": "mountain",
     "lat": 45.30065,
     "lng": 6.94745,
@@ -434,7 +434,7 @@ const pois = [
   },
   {
     "name": "Col de la Colombière",
-    "description": "Col de la Colombière",
+    "description": "",
     "type": "mountain",
     "lat": 45.99224,
     "lng": 6.47574,
@@ -442,7 +442,7 @@ const pois = [
   },
   {
     "name": "Gurnigel (Passhöhe Stierenhütte)",
-    "description": "Gurnigel (Passhöhe Stierenhütte)",
+    "description": "",
     "type": "mountain",
     "lat": 46.73203,
     "lng": 7.44789,
@@ -450,7 +450,7 @@ const pois = [
   },
   {
     "name": "Col de Turini",
-    "description": "Col de Turini",
+    "description": "",
     "type": "mountain",
     "lat": 43.97758,
     "lng": 7.39158,
@@ -458,7 +458,7 @@ const pois = [
   },
   {
     "name": "Col de l'Arpettaz",
-    "description": "Col de l'Arpettaz",
+    "description": "",
     "type": "mountain",
     "lat": 45.79691,
     "lng": 6.43368,
@@ -466,7 +466,7 @@ const pois = [
   },
   {
     "name": "Col du Télégraphe",
-    "description": "Col du Télégraphe",
+    "description": "",
     "type": "mountain",
     "lat": 45.20272,
     "lng": 6.44463,
@@ -482,7 +482,7 @@ const pois = [
   },
   {
     "name": "Col du Grand Colombier",
-    "description": "Col du Grand Colombier",
+    "description": "",
     "type": "mountain",
     "lat": 45.90345,
     "lng": 5.76111,
@@ -490,7 +490,7 @@ const pois = [
   },
   {
     "name": "Col des Mosses",
-    "description": "Col des Mosses",
+    "description": "",
     "type": "mountain",
     "lat": 46.39724,
     "lng": 7.10146,
@@ -498,11 +498,19 @@ const pois = [
   },
   {
     "name": "Col du Mollendruz",
-    "description": "Col du Mollendruz",
+    "description": "",
     "type": "mountain",
     "lat": 46.65054,
     "lng": 6.36458,
     "maps": "https://www.google.com/maps?q=46.65054,6.36458"
+  },
+  {
+    "name": "Col de Tende, Colle di Tenda",
+    "description": "",
+    "type": "mountain",
+    "lat": 44.16784,
+    "lng": 7.57141,
+    "maps": "https://www.google.com/maps?q=44.16784,7.57141"
   },
 
 
