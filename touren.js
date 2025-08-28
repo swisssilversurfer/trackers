@@ -1,4 +1,6 @@
     const touren = [
+
+    // ITALIEN
       {
         name: "Colle del Sommeiller",
         gpx: "gpx/IT-Bardonecchia-Colle-del-Sommeiller.gpx",
@@ -6,7 +8,6 @@
           "images/IT-Bardonecchia-Colle-del-Sommeiller_01.jpeg",
           "images/IT-Bardonecchia-Colle-del-Sommeiller_02.jpeg",
           "images/IT-Bardonecchia-Colle-del-Sommeiller_03.jpeg",
-          
         ],
         beschreibung: "Schotterstrecke auf über 3000m – einer der höchsten legal befahrbaren Wege Europas.",
         distanz: "25 km",
@@ -31,7 +32,7 @@
         schwierigkeit: "Mittel",
         strassenbelag: "Off-road",
         cityId: "3182362",
-        },
+      },
       {
         name: "Assietta-Kammstraße",
         gpx: "gpx/IT-Strada-del-Assietta.gpx",
@@ -174,6 +175,8 @@
         strassenbelag: "Off-road",
         cityId: "3182173",
       },
+
+    // FRANKREICH
       {
         name: "Route des Grandes Alpes",
         gpx: "gpx/FR-Route-des-Grandes-Alpes.gpx",
@@ -207,6 +210,22 @@
         strassenbelag: "Gemischt",
         cityId: "2979303",
       },
+      {
+        name: "Route de la Soif",
+        gpx: "gpx/FR-Route-de-la-Soif.gpx",
+        bild: [
+          "images/FR-Route-de-la-Soif_01.jpeg",
+        ],
+        beschreibung: "Geschotterte Höhenstrasse zwischen Col de l'Arpettaz und Col des Aravis.",
+        distanz: "30 km",
+        besonderheiten: "Je nach Jahres- und Tageszeit viele Wanderer und Fahrradfahrer",
+        country: "Frankreich",
+        schwierigkeit: "Leicht",
+        strassenbelag: "Schotter",
+        cityId: "2979303",
+      },
+
+    // SCHWEIZ
       {
         name: "Grengiols - Heiligkreuz",
         gpx: "gpx/CH-Grengiols-Heiligkreuz.gpx",
