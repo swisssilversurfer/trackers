@@ -244,7 +244,7 @@
 
     .overlay-control {
       position: absolute;
-      bottom: 15px;
+      top: 10px;
       left: 50%;
       transform: translateX(-50%);
       background: rgba(255,255,255,0.9);
@@ -708,13 +708,7 @@
           };
 
           L.control.layers(baseLayers, null, { position: 'topright' }).addTo(map);  // Add main control (only base maps)
-
-          L.control.scale({                                                         // Add scale in bottom right
-            position: "bottomright",
-            metric: true,
-            imperial: false
-          }).addTo(map);
-
+          L.control.scale({ position: "bottomright", metric: true, imperial: false }).addTo(map);
           baseLayers["Standard"].addTo(map);
 
           // Add tour title to map
@@ -725,12 +719,54 @@
           const zoomContainer = map.zoomControl.getContainer();
           zoomContainer.parentNode.insertBefore(tourTitleDiv, zoomContainer.nextSibling);
 
-          // Store reference for later updates
-          map.tourTitleDiv = tourTitleDiv;
+          // Shared layers
+            if (!window.poiLayer) window.poiLayer = L.layerGroup().addTo(map);
+            if (!window.tooltipLayer) window.tooltipLayer = L.layerGroup().addTo(map);
 
-          mapInitialized = true;
-        }
-      }
+
+            if (!window.overlayControl) {
+            window.overlayControl = L.control.layers(
+              null,
+              { "POIs": window.poiLayer, "Tour-Info": window.tooltipLayer },
+              { collapsed: false, position: 'bottomleft' }
+            ).addTo(map);
+
+            // Move to bottom center
+            const overlayContainer = window.overlayControl.getContainer();
+            document.querySelector(".leaflet-bottom.leaflet-left").removeChild(overlayContainer);
+            map.getContainer().appendChild(overlayContainer);
+            overlayContainer.classList.add("overlay-control");
+          }
+
+          // Store reference for later updates
+            map.tourTitleDiv = tourTitleDiv;
+
+          // POIs layer group
+            if (!window.poiLayer) window.poiLayer = L.layerGroup(); 
+            else window.poiLayer.clearLayers(); // reuse existing layer
+
+            if (!window.tooltipLayer) window.tooltipLayer = L.layerGroup();
+            else window.tooltipLayer.clearLayers(); // reuse existing layer
+
+            const poiLayer = window.poiLayer;
+            const tooltipLayer = window.tooltipLayer;
+
+            pois.forEach(poi => {
+              const icon = poiIcons[poi.type];
+              L.marker([poi.lat, poi.lng], { icon })
+                .bindPopup(`
+                  <b>${poi.name}</b><br>
+                  ${poi.description}<br>
+                  <a href="${poi.maps}" target="_blank">Google Maps</a>
+                `)
+                .addTo(poiLayer);
+            });
+
+            poiLayer.addTo(map);
+
+            mapInitialized = true;
+            }
+          }
 
       // Function to render all tours on map (depending on filters)
       function renderMapFilteredTours() {
@@ -743,10 +779,7 @@
         if (overlay) overlay.style.display = "none";
 
         // Remove old tracks
-        if (currentTrack) {
-          map.removeLayer(currentTrack);
-          currentTrack = null;
-        }
+        if (currentTrack) map.removeLayer(currentTrack);
         allTracksLayers.forEach(layer => map.removeLayer(layer));
         allTracksLayers = [];
 
@@ -756,27 +789,6 @@
 
         const spinner = document.getElementById("map-spinner");
         spinner.style.display = "block";
-
-        // --- POIs layer group ---
-        if (!window.poiLayer) window.poiLayer = L.layerGroup(); 
-        else window.poiLayer.clearLayers(); // reuse existing layer
-
-        if (!window.tooltipLayer) window.tooltipLayer = L.layerGroup();
-        else window.tooltipLayer.clearLayers(); // reuse existing layer
-
-        const poiLayer = window.poiLayer;
-        const tooltipLayer = window.tooltipLayer;
-
-        pois.forEach(poi => {
-          const icon = poiIcons[poi.type];
-          L.marker([poi.lat, poi.lng], { icon })
-            .bindPopup(`
-              <b>${poi.name}</b><br>
-              ${poi.description}<br>
-              <a href="${poi.maps}" target="_blank">Google Maps</a>
-            `)
-            .addTo(poiLayer);
-        });
 
         // Helper: midpoint along polyline
         function getPolylineMidpoint(polyline) {
@@ -837,36 +849,24 @@
               tooltipLayer.addLayer(tooltipMarker);
 
               try {
-      tooltipMarker.on('click', () => {
-        renderMapSingleTrack(tour.gpx, tour.pois);
-      });
+          tooltipMarker.on('click', () => {
+            renderMapSingleTrack(tour.gpx, tour.pois);
+          });
 
-      // ensure tooltip opens
-      tooltipMarker.on('add', () => tooltipMarker.openTooltip());
+          // ensure tooltip opens
+          tooltipMarker.on('add', () => tooltipMarker.openTooltip());
+                  } catch (err) {
+                    console.error('Tooltip click setup failed', err);
+                  }
+                })
+                .addTo(map);
 
-              } catch (err) {
-                console.error('Tooltip click setup failed', err);
-              }
-            })
-            .addTo(map);
+              allTracksLayers.push(gpxLayer);
+            });
 
-          allTracksLayers.push(gpxLayer);
-        });
+            tooltipLayer.addTo(map);
 
-        poiLayer.addTo(map);
-        tooltipLayer.addTo(map);
-
-        // Overlay control
-        const overlayControl = L.control.layers(null, { "POIs": poiLayer, "Tour-Info": tooltipLayer }, { collapsed:false, position:'bottomleft' });
-        overlayControl.addTo(map);
-
-        // Move to bottom center
-        const overlayContainer = overlayControl.getContainer();
-        document.querySelector(".leaflet-bottom.leaflet-left").removeChild(overlayContainer);
-        map.getContainer().appendChild(overlayContainer);
-        overlayContainer.classList.add("overlay-control");
-
-        document.querySelector(".leaflet-tour-title").textContent = "Gefilterte Touren";
+            document.querySelector(".leaflet-tour-title").textContent = "Gefilterte Touren";
       }
 
       // Function to render a single tour in the map
@@ -875,7 +875,7 @@
         showView("mapSingleTrack");
         lastViewMode = currentViewMode;
         currentViewMode = "mapSingleTrack";
-        tooltipLayer.eachLayer(marker => marker.closeTooltip());
+        map.removeLayer(window.tooltipLayer);
 
         const overlay = document.getElementById("altitude-overlay");
           if (overlay) overlay.style.display = "none"; // hide until GPX loads
@@ -893,6 +893,7 @@
           </div>
         `;
 
+        // Remove old tracks
         if (currentTrack) map.removeLayer(currentTrack);
         allTracksLayers.forEach(layer => map.removeLayer(layer));
         allTracksLayers = [];

@@ -222,7 +222,7 @@
         country: "Frankreich",
         schwierigkeit: "Leicht",
         strassenbelag: "Schotter",
-        cityId: "2979303",
+        cityId: "3037313",
       },
 
     // SCHWEIZ
