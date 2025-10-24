@@ -121,7 +121,7 @@
         ],
         beschreibung: "Ehemalige Militär-Höhenstrasse in den Seealpen.",
         distanz: "90 km",
-        besonderheiten: "Abschnitt Grange Selvest - Colle del Preit für Motorfahrzeuge gesperrt 1. Juli - 15. September",
+        besonderheiten: "Seit 2025 für Motorfahrzeuge gesperrt",
         country: "Italien",
         schwierigkeit: "Leicht",
         strassenbelag: "Off-road",
